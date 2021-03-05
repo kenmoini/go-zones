@@ -5,15 +5,18 @@ zones:
     subnet: 192.168.42.0/24
     subnet_v6: fdf4:e2e0:df12:a100::/64
     network: external
+    primary_dns_server: dns-core-1.kemo.labs
     ttl: 3600
     records:
       NS:
         - name: dns-core-1
           ttl: 86400
           domain: kemo.labs
+          anchor: '@'
         - name: dns-core-2
           ttl: 86400
           domain: kemo.labs
+          anchor: '@'
       A:
         - name: dns-core-1
           ttl: 86400
@@ -43,23 +46,23 @@ zones:
         - name: '@'
           ttl: 3600
           priority: 1
-          value: ASPMX.L.GOOGLE.COM
+          value: ASPMX.L.GOOGLE.COM.
         - name: '@'
           ttl: 3600
           priority: 5
-          value: ALT1.ASPMX.L.GOOGLE.COM
+          value: ALT1.ASPMX.L.GOOGLE.COM.
         - name: '@'
           ttl: 3600
           priority: 5
-          value: ALT2.ASPMX.L.GOOGLE.COM
+          value: ALT2.ASPMX.L.GOOGLE.COM.
         - name: '@'
           ttl: 3600
           priority: 10
-          value: ALT3.ASPMX.L.GOOGLE.COM
+          value: ALT3.ASPMX.L.GOOGLE.COM.
         - name: '@'
           ttl: 3600
           priority: 10
-          value: ALT4.ASPMX.L.GOOGLE.COM
+          value: ALT4.ASPMX.L.GOOGLE.COM.
 
       TXT:
         - name: '@'
@@ -78,15 +81,18 @@ zones:
     subnet: 192.168.42.0/24
     subnet_v6: fdf4:e2e0::/32
     network: internal
+    primary_dns_server: dns-core-1.kemo.labs
     ttl: 3600
     records:
       NS:
         - name: dns-core-1
           ttl: 86400
           domain: example.com
+          anchor: '@'
         - name: dns-core-2
           ttl: 86400
           domain: example.com
+          anchor: '@'
       A:
         - name: '@'
           ttl: 3600

@@ -67,27 +67,32 @@ type Zones struct {
 
 // ZonesYaml is what each Zone is set up as
 type ZonesYaml struct {
-	Name     string  `yaml:"name"`
-	Network  string  `yaml:"network"`
-	SubnetV4 string  `yaml:"subnet,omitempty"`
-	SubnetV6 string  `yaml:"subnet_v6,omitempty"`
-	TTL      int     `yaml:"ttl,omitempty"`
-	Records  Records `yaml:"records,omitempty"`
+	Name             string  `yaml:"name"`
+	Network          string  `yaml:"network"`
+	PrimaryDNSServer string  `yaml:"primary_dns_server"`
+	SubnetV4         string  `yaml:"subnet,omitempty"`
+	SubnetV6         string  `yaml:"subnet_v6,omitempty"`
+	TTL              int     `yaml:"ttl,omitempty"`
+	Records          Records `yaml:"records,omitempty"`
 }
 
 // Records is a collection of different record types
 type Records struct {
 	NS    []NSRecord    `yaml:"NS,omitempty"`
 	A     []ARecord     `yaml:"A,omitempty"`
+	MX    []MXRecord    `yaml:"MX,omitempty"`
 	AAAA  []AAAARecord  `yaml:"AAAA,omitempty"`
 	CNAME []CNAMERecord `yaml:"CNAME,omitempty"`
+	TXT   []TXTRecord   `yaml:"TXT,omitempty"`
+	SRV   []SRVRecord   `yaml:"SRV,omitempty"`
 }
 
 // NSRecord is an NS Record definition
 type NSRecord struct {
-	Name  string `yaml:"name"`
-	Value string `yaml:"value"`
-	TTL   int    `yaml:"ttl,omitempty"`
+	Name   string `yaml:"name"`
+	Domain string `yaml:"domain"`
+	Anchor string `yaml:"anchor"`
+	TTL    int    `yaml:"ttl,omitempty"`
 }
 
 // ARecord is an A Record definition
@@ -109,4 +114,50 @@ type CNAMERecord struct {
 	Name  string `yaml:"name"`
 	Value string `yaml:"value"`
 	TTL   int    `yaml:"ttl,omitempty"`
+}
+
+// MXRecord is an MX Record definition
+type MXRecord struct {
+	Name     string `yaml:"name"`
+	Value    string `yaml:"value"`
+	Priority int    `yaml:"priority"`
+	TTL      int    `yaml:"ttl,omitempty"`
+}
+
+// SRVRecord is an SRV Record definition
+type SRVRecord struct {
+	Name     string `yaml:"name"`
+	Value    string `yaml:"value"`
+	Priority int    `yaml:"priority"`
+	Port     int    `yaml:"port"`
+	Weight   int    `yaml:"weight"`
+	TTL      int    `yaml:"ttl,omitempty"`
+}
+
+// TXTRecord is an TXT Record definition
+type TXTRecord struct {
+	Name  string `yaml:"name"`
+	Value string `yaml:"value"`
+	TTL   int    `yaml:"ttl,omitempty"`
+}
+
+// BindZoneConfig will setup the bind config for zones
+type BindZoneConfig struct {
+	Network string // Network type (internal/external/etc)
+	Name    string // what zone is being served, example.com
+	Path    string // Path to the Zones file
+	Mode    string // Mode is forward or reverse zone
+}
+
+// PackagedZone is what is fed to the Zone Template
+type PackagedZone struct {
+	Zone                  ZonesYaml
+	TTL                   int
+	Mode                  string
+	SerialNumber          string
+	Path                  string
+	DefaultZoneSOARefresh string
+	DefaultZoneSOARetry   string
+	DefaultZoneSOAExpire  string
+	DefaultZoneSOAMinTTL  int
 }

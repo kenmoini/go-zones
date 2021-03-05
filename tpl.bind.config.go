@@ -9,14 +9,6 @@ import (
 	"github.com/brotherpowers/ipsubnet"
 )
 
-// BindZoneConfig will setup the bind config for zones
-type BindZoneConfig struct {
-	Network string // Network type (internal/external/etc)
-	Name    string // what zone is being served, example.com
-	Path    string // Path to the Zones file
-	Mode    string // Mode is forward or reverse zone
-}
-
 // LoopThroughZonesForBindConfig creates the zone files
 func LoopThroughZonesForBindConfig(zones *Zones, basePath string) (bool, error) {
 	for _, zone := range zones.Zones {
@@ -27,10 +19,10 @@ func LoopThroughZonesForBindConfig(zones *Zones, basePath string) (bool, error) 
 				Name:    zone.Name,
 				Mode:    "forward",
 				Network: zone.Network,
-				Path:    basePath + "/zones/" + zone.Name + "." + zone.Network + ".forward.zone"}
+				Path:    basePath + "/config/" + zone.Name + "." + zone.Network + ".forward.conf"}
 
 			// Parse template
-			t, err := template.New("zones").Parse(bindZoneConfigTemplate)
+			t, err := template.New("config").Parse(bindZoneConfigTemplate)
 			check(err)
 			// Create zone file
 			f, err := os.Create(BindConfigStructure.Path)
@@ -59,10 +51,10 @@ func LoopThroughZonesForBindConfig(zones *Zones, basePath string) (bool, error) 
 						Name:    reverseZone,
 						Mode:    "reverse",
 						Network: zone.Network,
-						Path:    basePath + "/zones/" + reverseZone + zone.Network + ".reverse.zone"}
+						Path:    basePath + "/config/" + reverseZone + zone.Network + ".reverse.conf"}
 
 					// Parse template
-					t, err := template.New("zones").Parse(bindZoneConfigTemplate)
+					t, err := template.New("configrev").Parse(bindZoneConfigTemplate)
 					check(err)
 					// Create zone file
 					f, err := os.Create(ReverseBindConfigStructure.Path)
@@ -92,10 +84,10 @@ func LoopThroughZonesForBindConfig(zones *Zones, basePath string) (bool, error) 
 						Name:    shortReverse,
 						Mode:    "reverse",
 						Network: zone.Network,
-						Path:    basePath + "/zones/" + shortReverse + zone.Network + ".reverse.zone"}
+						Path:    basePath + "/config/" + shortReverse + zone.Network + ".reverse.conf"}
 
 					// Parse template
-					t, err := template.New("zones").Parse(bindZoneConfigTemplate)
+					t, err := template.New("configrevv6").Parse(bindZoneConfigTemplate)
 					check(err)
 					// Create zone file
 					f, err := os.Create(ReverseBindConfigStructure.Path)
