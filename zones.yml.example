@@ -1,0 +1,94 @@
+# example zone config
+## Assumes two authoritative dns servers at dns-core-1.example.com and dns-core-2.example.com serving both zones
+zones:
+  - name: example.com
+    subnet: 192.168.42.0/24
+    subnet_v6: fdf4:e2e0:df12:a100::/64
+    reverse_dns_base: 42.168.192.in-addr.arpa
+    ttl: 3600
+    records:
+      NS:
+        - name: dns-core-1
+          ttl: 86400
+          domain: kemo.labs
+        - name: dns-core-2
+          ttl: 86400
+          domain: kemo.labs
+      A:
+        - name: dns-core-1
+          ttl: 86400
+          value: 192.168.42.2
+        - name: dns-core-2
+          ttl: 86400
+          value: 192.168.42.3
+        - name: idm
+          type: A
+          ttl: 86400
+          value: 192.168.42.10
+
+      AAAA:
+        - name: dns-core-1
+          ttl: 86400
+          value: 2001:DB8::2
+        - name: dns-core-2
+          ttl: 86400
+          value: 2001:DB8::3
+
+      CNAME:
+        - name: dns2
+          ttl: 6400
+          value: dns-core-2.example.com
+
+      MX:
+        - name: '@'
+          ttl: 3600
+          priority: 1
+          value: ASPMX.L.GOOGLE.COM
+        - name: '@'
+          ttl: 3600
+          priority: 5
+          value: ALT1.ASPMX.L.GOOGLE.COM
+        - name: '@'
+          ttl: 3600
+          priority: 5
+          value: ALT2.ASPMX.L.GOOGLE.COM
+        - name: '@'
+          ttl: 3600
+          priority: 10
+          value: ALT3.ASPMX.L.GOOGLE.COM
+        - name: '@'
+          ttl: 3600
+          priority: 10
+          value: ALT4.ASPMX.L.GOOGLE.COM
+
+      TXT:
+        - name: '@'
+          ttl: 6400
+          value: "v=spf1 includespf.dynect.net ~all"
+
+      SRV:
+        - name: _ntp._udp
+          value: idm.example.com
+          port: 123
+          priority: 0
+          ttl: 6400
+          weight: 100
+
+  - name: example.net
+    subnet: 192.168.42.0/24
+    ttl: 3600
+    records:
+      NS:
+        - name: dns-core-1
+          ttl: 86400
+          domain: example.com
+        - name: dns-core-2
+          ttl: 86400
+          domain: example.com
+      A:
+        - name: '@'
+          ttl: 3600
+          value: 192.168.42.100
+        - name: www
+          ttl: 3600
+          value: 192.168.42.100
