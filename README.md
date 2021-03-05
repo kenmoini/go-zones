@@ -1,6 +1,6 @@
 # GoZones
 
-[![Tests](https://github.com/kenmoini/go-zone/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/kenmoini/go-zone/actions/workflows/test.yml) [![release](https://github.com/kenmoini/go-zone/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/kenmoini/go-zone/actions/workflows/release.yml)
+[![Tests](https://github.com/kenmoini/go-zones/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/kenmoini/go-zones/actions/workflows/test.yml) [![release](https://github.com/kenmoini/go-zones/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/kenmoini/go-zones/actions/workflows/release.yml)
 
 GoZones is an application that will take DNS Zones as defined in YAML and generate BIND-compatable DNS Zone files and the configuration required to load the zone file.
 
