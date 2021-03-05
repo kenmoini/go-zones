@@ -8,6 +8,7 @@ import (
 )
 
 // LoopThroughZonesForBindZonesFiles creates the zone files
+// Validated with https://bind.jamiewood.io/
 func LoopThroughZonesForBindZonesFiles(zones *Zones, basePath string) (bool, error) {
 	for _, zone := range zones.Zones {
 		if (zone.Name != "") && (zone.Network != "") {
@@ -62,7 +63,7 @@ $TTL {{ .TTL }}
 	{{ .DefaultZoneSOAMinTTL }} )
 
 {{ with .Zone.Records.NS }}{{ range . }}
-{{ .Anchor }} {{ .TTL }} IN NS {{ .Name }}.{{ .Domain }}.{{ end }}{{ end }}
+{{ .Anchor }} {{ .TTL }} IN NS {{ .Name }}.{{ .Domain }}{{ end }}{{ end }}
 
 {{ with .Zone.Records.MX }}{{ range . }}
 {{ .Name }} {{ .TTL }} IN MX {{ .Priority }} {{ .Value }}{{ end }}{{ end }}
@@ -79,4 +80,6 @@ $TTL {{ .TTL }}
 {{ with .Zone.Records.TXT }}{{ range . }}
 {{ .Name }} {{ .TTL }} IN TXT {{ .Value }}{{ end }}{{ end }}
 
+{{ with .Zone.Records.SRV }}{{ range . }}
+{{ .Name }} {{ .TTL }} IN SRV {{ .Priority }} {{ .Weight }} {{ .Port }} {{ .Value }}{{ end }}{{ end }}
 `

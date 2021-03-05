@@ -11,11 +11,11 @@ zones:
       NS:
         - name: dns-core-1
           ttl: 86400
-          domain: kemo.labs
+          domain: kemo.labs.
           anchor: '@'
         - name: dns-core-2
           ttl: 86400
-          domain: kemo.labs
+          domain: kemo.labs.
           anchor: '@'
       A:
         - name: dns-core-1
@@ -40,7 +40,7 @@ zones:
       CNAME:
         - name: dns2
           ttl: 6400
-          value: dns-core-2.example.com
+          value: dns-core-2.example.com.
 
       MX:
         - name: '@'
@@ -71,7 +71,7 @@ zones:
 
       SRV:
         - name: _ntp._udp
-          value: idm.example.com
+          value: idm.example.com.
           port: 123
           priority: 0
           ttl: 6400
@@ -87,11 +87,11 @@ zones:
       NS:
         - name: dns-core-1
           ttl: 86400
-          domain: example.com
+          domain: example.com.
           anchor: '@'
         - name: dns-core-2
           ttl: 86400
-          domain: example.com
+          domain: example.com.
           anchor: '@'
       A:
         - name: '@'
