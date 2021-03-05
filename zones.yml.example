@@ -4,7 +4,7 @@ zones:
   - name: example.com
     subnet: 192.168.42.0/24
     subnet_v6: fdf4:e2e0:df12:a100::/64
-    reverse_dns_base: 42.168.192.in-addr.arpa
+    network: external
     ttl: 3600
     records:
       NS:
@@ -29,10 +29,10 @@ zones:
       AAAA:
         - name: dns-core-1
           ttl: 86400
-          value: 2001:DB8::2
+          value: fdf4:e2e0:df12:a100::2
         - name: dns-core-2
           ttl: 86400
-          value: 2001:DB8::3
+          value: fdf4:e2e0:df12:a100::3
 
       CNAME:
         - name: dns2
@@ -76,6 +76,8 @@ zones:
 
   - name: example.net
     subnet: 192.168.42.0/24
+    subnet_v6: fdf4:e2e0::/32
+    network: internal
     ttl: 3600
     records:
       NS:

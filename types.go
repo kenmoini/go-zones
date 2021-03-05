@@ -59,3 +59,54 @@ type Server struct {
 		Idle time.Duration `yaml:"idle"`
 	} `yaml:"timeout"`
 }
+
+// Zones is the overall Zones struct
+type Zones struct {
+	Zones []ZonesYaml `yaml:"zones"`
+}
+
+// ZonesYaml is what each Zone is set up as
+type ZonesYaml struct {
+	Name     string  `yaml:"name"`
+	Network  string  `yaml:"network"`
+	SubnetV4 string  `yaml:"subnet,omitempty"`
+	SubnetV6 string  `yaml:"subnet_v6,omitempty"`
+	TTL      int     `yaml:"ttl,omitempty"`
+	Records  Records `yaml:"records,omitempty"`
+}
+
+// Records is a collection of different record types
+type Records struct {
+	NS    []NSRecord    `yaml:"NS,omitempty"`
+	A     []ARecord     `yaml:"A,omitempty"`
+	AAAA  []AAAARecord  `yaml:"AAAA,omitempty"`
+	CNAME []CNAMERecord `yaml:"CNAME,omitempty"`
+}
+
+// NSRecord is an NS Record definition
+type NSRecord struct {
+	Name  string `yaml:"name"`
+	Value string `yaml:"value"`
+	TTL   int    `yaml:"ttl,omitempty"`
+}
+
+// ARecord is an A Record definition
+type ARecord struct {
+	Name  string `yaml:"name"`
+	Value string `yaml:"value"`
+	TTL   int    `yaml:"ttl,omitempty"`
+}
+
+// AAAARecord is an AAAA Record definition
+type AAAARecord struct {
+	Name  string `yaml:"name"`
+	Value string `yaml:"value"`
+	TTL   int    `yaml:"ttl,omitempty"`
+}
+
+// CNAMERecord is a CNAME Record definition
+type CNAMERecord struct {
+	Name  string `yaml:"name"`
+	Value string `yaml:"value"`
+	TTL   int    `yaml:"ttl,omitempty"`
+}

@@ -45,6 +45,27 @@ func NewConfig(configPath CLIOpts) (*Config, error) {
 	return config, nil
 }
 
+// NewZones returns a new decoded Zones struct
+func NewZones(configPath CLIOpts) (*Zones, error) {
+	// Create config structure
+	config := &Zones{}
+
+	// Open config file
+	file, err := os.Open(configPath.Source)
+	checkAndFail(err)
+	defer file.Close()
+
+	// Init new YAML decode
+	d := yaml.NewDecoder(file)
+
+	// Start YAML decoding from file
+	if err := d.Decode(&config); err != nil {
+		return nil, err
+	}
+
+	return config, nil
+}
+
 // ParseFlags will create and parse the CLI flags
 // and return the path to be used elsewhere
 func ParseFlags() (CLIOpts, error) {
