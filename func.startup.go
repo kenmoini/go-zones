@@ -101,46 +101,46 @@ func ParseFlags() (CLIOpts, error) {
 	case "server":
 		if configPath == "" {
 			return CLIOpts{}, Stoerr("[Server Mode]: No server configuration defined! (-config=./config.yml)")
-		} else {
-			// Validate the path first
-			if err := ValidateConfigPath(configPath); err != nil {
-				return CLIOpts{}, err
-			}
 		}
+		// Validate the path first
+		if err := ValidateConfigPath(configPath); err != nil {
+			return CLIOpts{}, err
+		}
+
 	case "file":
 		if source == "" {
 			return CLIOpts{}, Stoerr("[File Mode]: No source YAML defined! (-source=./zones.yml)")
-		} else {
-			// Validate the source file first
-			if err := ValidateConfigPath(source); err != nil {
-				return CLIOpts{}, err
-			}
 		}
+		// Validate the source file first
+		if err := ValidateConfigPath(source); err != nil {
+			return CLIOpts{}, err
+		}
+
 		if dir == "" {
 			return CLIOpts{}, Stoerr("[File Mode]: No target directory defined! (-dir=./generated)")
-		} else {
-			// Validate the dir directory first
-			if err := ValidateConfigDirectory(dir); err != nil {
-				return CLIOpts{}, err
-			}
 		}
+		// Validate the dir directory first
+		if err := ValidateConfigDirectory(dir); err != nil {
+			return CLIOpts{}, err
+		}
+
 	default:
 		if source == "" {
 			return CLIOpts{}, Stoerr("[File Mode]: No source YAML defined! (-source=./zones.yml)")
-		} else {
-			// Validate the source file first
-			if err := ValidateConfigPath(source); err != nil {
-				return CLIOpts{}, err
-			}
 		}
+		// Validate the source file first
+		if err := ValidateConfigPath(source); err != nil {
+			return CLIOpts{}, err
+		}
+
 		if dir == "" {
 			return CLIOpts{}, Stoerr("[File Mode]: No target directory defined! (-dir=./generated)")
-		} else {
-			// Validate the dir directory first
-			if err := ValidateConfigDirectory(dir); err != nil {
-				return CLIOpts{}, err
-			}
 		}
+		// Validate the dir directory first
+		if err := ValidateConfigDirectory(dir); err != nil {
+			return CLIOpts{}, err
+		}
+
 	}
 
 	SetCLIOpts := CLIOpts{

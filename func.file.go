@@ -39,19 +39,16 @@ func ValidateConfigDirectory(path string) error {
 		// Directory exists - ensure writability
 		if IsWritable(path) {
 			return nil
-		} else {
-			return Stoerr("Directory is not writable!")
 		}
-	} else {
-		// Directory doesn't exist - pop off last part of path and check if we have write permissions to create the directory
-		parent := filepath.Dir(path)
-
-		if IsWritable(parent) {
-			return nil
-		} else {
-			return Stoerr("Directory does NOT exists AND parent is not writable!")
-		}
+		return Stoerr("Directory is not writable!")
 	}
+	// Directory doesn't exist - pop off last part of path and check if we have write permissions to create the directory
+	parent := filepath.Dir(path)
+
+	if IsWritable(parent) {
+		return nil
+	}
+	return Stoerr("Directory does NOT exists AND parent is not writable!")
 }
 
 // DirectoryExists checks if a file exists and returns a boolean or an erro
