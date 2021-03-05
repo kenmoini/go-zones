@@ -123,18 +123,7 @@ func IPV4ToPortions(network string, recordIP string) (subnet string, netblock st
 
 // RevValue takes a value and
 func (r ARecord) RevValue(network string, recordIP string) string {
-	subnet, netblock, networkPortion, revAddr, reverseZone, networkPrefix, revNetworkAddr := IPV4ToPortions(network, recordIP)
-	revValue := strings.ReplaceAll(revAddr, reverseZone, "")
-	logStdOut("subnet: " + subnet)
-	logStdOut("netblock: " + netblock)
-	logStdOut("networkPortion: " + networkPortion)
-	logStdOut("revAddr: " + revAddr)
-	logStdOut("reverseZone: " + reverseZone)
-	logStdOut("networkPrefix: " + networkPrefix)
-	logStdOut("revValue: " + revValue)
-	logStdOut("revNetworkAddr: " + revNetworkAddr)
-	//revName := strings.Split(string(r.Value), ".")
-	//revJoined := strings.Join(revName[len(revName)-1:], "")
+	_, _, _, _, _, _, revNetworkAddr := IPV4ToPortions(network, recordIP)
 	return revNetworkAddr
 }
 
