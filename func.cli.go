@@ -35,4 +35,7 @@ func (config CLIOpts) FileModeApplication() {
 
 	_, err = LoopThroughZonesForBindZonesFiles(zones, absoluteTargetDirectory)
 	check(err)
+
+	_, err = LoopThroughZonesForBindReverseV4ZonesFiles(zones, absoluteTargetDirectory)
+	check(err)
 }

@@ -161,3 +161,17 @@ type PackagedZone struct {
 	DefaultZoneSOAExpire  string
 	DefaultZoneSOAMinTTL  int
 }
+
+// PackagedReverseZone is what is fed to the Reverse Zone Template
+type PackagedReverseZone struct {
+	Zone                  ZonesYaml
+	ReverseName           string
+	TTL                   int
+	Mode                  string
+	SerialNumber          string
+	Path                  string
+	DefaultZoneSOARefresh string
+	DefaultZoneSOARetry   string
+	DefaultZoneSOAExpire  string
+	DefaultZoneSOAMinTTL  int
+}
