@@ -1,12 +1,10 @@
-# Golang Boilerplate - GoZones
+# GoZones
 
-This is a boilerplate application to quickly create new Golang applications.  It can support File mode or Server mode transactions and includes additional helper functions for logging, file interactions, and other common operations - in addition to other developmental building blocks such as a Container defintion, GoReleaser configuration and matching GitHub Actions that are ready to use with no or little set up.
+[![Tests](https://github.com/kenmoini/go-zone/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/kenmoini/go-zone/actions/workflows/test.yml) [![release](https://github.com/kenmoini/go-zone/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/kenmoini/go-zone/actions/workflows/release.yml)
 
-*This document is a work in progress and this boilerplate is likely to evolve over time*
+GoZones is an application that will take DNS Zones as defined in YAML and generate BIND-compatable DNS Zone files and the configuration required to load the zone file.
 
-[![Tests](https://github.com/kenmoini/golang-boilerplate/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/kenmoini/golang-boilerplate/actions/workflows/test.yml) [![release](https://github.com/kenmoini/golang-boilerplate/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/kenmoini/golang-boilerplate/actions/workflows/release.yml)
-
-***In this documentation, "GoZones/go-zones" can be replaced with your application name***
+GoZones can operate in single-file input/output batches, or via an HTTP server.
 
 ## Example Commands & Parameters
 
@@ -19,7 +17,7 @@ $ ./go-zones -mode server -config=./config.yml
 
 ## Deployment - As a Container
 
-This boilerplate comes with a `Containerfile` that can be built with Docker or Podman with the following command:
+GoZones comes with a `Containerfile` that can be built with Docker or Podman with the following command:
 
 ```bash
 # Build the container
@@ -45,33 +43,3 @@ go build
 
 ./go-zones
 ```
-
-Of course, once you change the name of the application the executable name will change as well.
-
-## Starting Development
-
-### Initial Changes
-
-You'll likely want to change a few things, namely the name.
-
-- You can find the `appName` defined in the `variables.go` file.  This is what the application references internally for logs and so on.
-- You will also need to change the name/path in the `go.mod` file to match your repository path/name.  This is where the executable package gets its name.
-- Rename the template touch folder in `container_root/etc/go-zones/`.
-- Change the references in this `README.md` file to match your application name.
-- Adjust the `.gitignore` file to match what will be the name of your executable package.
-- Modify the `go-zones.service` file to match if you're utilizing this in Server Mode with SystemD as a Service
-
-## Lifecycle
-
-As the versioning of your application progresses, make sure to keep that semantic version up to date in the `appVersion` variable defined in the `variables.go` file.
-
-Once you are ready to release a new version of your application, you can utilize GoReleaser and GitHub Actions to create packaged Go binaries of your application across a matrix of operating systems and architectures.
-
-## Creating a Release
-
-### Generating GPG Keys for Signing
-
-### Creating the Repository Secrets in GitHub
-
-### Creating a New Release in GitHub
-
