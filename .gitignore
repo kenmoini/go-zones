@@ -1,4 +1,5 @@
 ./go-zones
+config/
 config.yml
 config.yaml
 zones.yml

@@ -17,7 +17,9 @@ $ ./go-zones -mode server -config=./config.yml
 
 ## Deployment - As a Container
 
-GoZones comes with a `Containerfile` that can be built with Docker or Podman with the following command:
+GoZones comes with a set of `Containerfile`s that can be built with Docker or Podman with the following commands:
+
+### Server Mode Container
 
 ```bash
 # Build the container
@@ -27,7 +29,22 @@ podman build -f Containerfile -t go-zones .
 mkdir config && cp config.yml.example config/config.yml
 
 # Mount that directory and run a container
-podman run -p 8080:8080 -v config/:/etc/go-zones go-zones
+podman run -p 8080:8080 -v config:/etc/go-zones go-zones
+```
+
+### File Mode Fronting to BIND
+
+There is an extra `Containerfile.file-to-bind` container definition file that will set up a container image that starts GoZones to generate zone files and BIND configuration, then starts a BIND DNS Server.
+
+```bash
+# Build the container
+podman build -f Containerfile.file-to-BIND -t go-zones:file-to-bind .
+
+# Create a config directory locally with a Zones configuration YAML file for file mode operation
+mkdir config && cp zones.yml.example config/zones.yml
+
+# Mount that directory and run a container
+podman run -p 8053:8053 -v config:/etc/go-zones go-zones:file-to-bind
 ```
 
 ### Adding extra files to the container image
