@@ -1,0 +1,14 @@
+FROM registry.access.redhat.com/ubi8/go-toolset:1.14.12 AS build
+
+WORKDIR /opt/app-root/src
+COPY . .
+RUN go build
+
+FROM scratch AS bin
+
+COPY --from=build /opt/app-root/src/go-zones /usr/local/bin/
+COPY container_root/ /
+
+EXPOSE 8053
+
+CMD [ "go-zones -mode file -source /etc/go-zones/zones.yml -dir=/opt/app-root/generated-conf" ]
