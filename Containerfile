@@ -6,9 +6,9 @@ RUN go build
 
 FROM scratch AS bin
 
-COPY --from=build /opt/app-root/src/locksmith /usr/local/bin/
+COPY --from=build /opt/app-root/src/go-zones /usr/local/bin/
 COPY container_root/ /
 
 EXPOSE 8080
 
-CMD [ "locksmith -config /etc/locksmith/config.yml" ]
+CMD [ "go-zones -mode server -config /etc/go-zones/config.yml" ]
