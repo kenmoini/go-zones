@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/brotherpowers/ipsubnet"
+	"github.com/miekg/dns"
 )
 
 // LoopThroughZonesForBindReverseV4ZonesFiles creates the zone files
@@ -35,7 +36,7 @@ func LoopThroughZonesForBindReverseV4ZonesFiles(zones *Zones, basePath string) (
 					reverseZone := strings.ReplaceAll(revAddr, "0.", "")
 
 					//=================================================
-					// Create Forward Zone Files
+					// Create Reverse v4 Zone Files
 					longTime := strconv.FormatInt(time.Now().UnixNano(), 10)
 					shortTimeSerial := longTime[len(longTime)-9:]
 
@@ -77,8 +78,35 @@ func LoopThroughZonesForBindReverseV4ZonesFiles(zones *Zones, basePath string) (
 					}
 
 					shortReverse := reverse6Short(wholeSubnetv6)
-					logStdOut("shortReverse: " + shortReverse)
 
+					//=================================================
+					// Create Reverse v6 Zone Files
+					longTime := strconv.FormatInt(time.Now().UnixNano(), 10)
+					shortTimeSerial := longTime[len(longTime)-9:]
+
+					PackagedRevZoneStructure := PackagedReverseZone{
+						Zone:                  zone,
+						ReverseName:           shortReverse,
+						TTL:                   zoneTTL,
+						SerialNumber:          shortTimeSerial,
+						DefaultZoneSOARefresh: defaultZoneSOARefresh,
+						DefaultZoneSOARetry:   defaultZoneSOARetry,
+						DefaultZoneSOAExpire:  defaultZoneSOAExpire,
+						DefaultZoneSOAMinTTL:  defaultZoneSOAMinTTL,
+						Mode:                  "reversev6",
+						Path:                  basePath + "/zones/" + shortReverse + "" + zone.Network + ".reverse.zone"}
+
+					// Parse template
+					t, err := template.New("rev6zones").Parse(bindReverseV6ZoneFileTemplate)
+					check(err)
+					// Create zone file
+					f, err := os.Create(PackagedRevZoneStructure.Path)
+					check(err)
+					// Execute zone file templating
+					err = t.Execute(f, PackagedRevZoneStructure)
+					check(err)
+					// Close and write file
+					f.Close()
 				}
 			}
 		} else {
@@ -107,6 +135,7 @@ func IPV4ToPortions(network string, recordIP string) (subnet string, netblock st
 
 	revAddr, err := reverseaddr(recordIP)
 	check(err)
+
 	reverseZone = strings.TrimPrefix(revAddr, "0.")
 	reverseZone = strings.TrimPrefix(reverseZone, "0.")
 	reverseZone = strings.TrimPrefix(reverseZone, "0.")
@@ -127,6 +156,18 @@ func (r ARecord) RevValue(network string, recordIP string) string {
 	return revNetworkAddr
 }
 
+// Rev6Value takes a value and
+func (r AAAARecord) Rev6Value(network string, recordIP string) string {
+	shortNetworkReverse := reverse6Short(network)
+
+	revAddrv6, err := dns.ReverseAddr(recordIP)
+	check(err)
+
+	hostPortion := strings.TrimSuffix(revAddrv6, "."+shortNetworkReverse)
+
+	return hostPortion
+}
+
 const bindReverseV4ZoneFileTemplate = `$ORIGIN {{ .ReverseName }}
 $TTL {{ .TTL }}
 
@@ -141,5 +182,22 @@ $TTL {{ .TTL }}
 {{ .Anchor }} {{ .TTL }} IN NS {{ .Name }}.{{ .Domain }}{{ end }}{{ end }}
 
 {{ with .Zone.Records.A }}{{ range . }}
-{{ .RevValue $.Zone.SubnetV4 .Value }} {{ .TTL }} IN PTR {{ .Name }}.{{ $.Zone.Name }}.{{ end }}{{ end }}
+{{ .RevValue $.Zone.SubnetV4 .Value }} {{ .TTL }} IN PTR {{ if ne .Name "@" }}{{ .Name }}.{{ end }}{{ $.Zone.Name }}.{{ end }}{{ end }}
+`
+
+const bindReverseV6ZoneFileTemplate = `$ORIGIN {{ .ReverseName }}
+$TTL {{ .TTL }}
+
+@ IN  SOA	{{ .Zone.PrimaryDNSServer }}. hostmaster.{{ .Zone.Name }}. (
+	{{ .SerialNumber }}
+	{{ .DefaultZoneSOARefresh }}
+	{{ .DefaultZoneSOARetry }}
+	{{ .DefaultZoneSOAExpire }}
+	{{ .DefaultZoneSOAMinTTL }} )
+
+{{ with .Zone.Records.NS }}{{ range . }}
+{{ .Anchor }} {{ .TTL }} IN NS {{ .Name }}.{{ .Domain }}{{ end }}{{ end }}
+
+{{ with .Zone.Records.AAAA }}{{ range . }}
+{{ .Rev6Value $.Zone.SubnetV6 .Value }} {{ .TTL }} IN PTR {{ if ne .Name "@" }}{{ .Name }}.{{ end }}{{ $.Zone.Name }}.{{ end }}{{ end }}
 `
