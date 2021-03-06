@@ -26,10 +26,10 @@ GoZones comes with a set of `Containerfile`s that can be built with Docker or Po
 podman build -f Containerfile -t go-zones .
 
 # Create a config directory locally with a server configuration YAML file
-mkdir config && cp config.yml.example config/config.yml
+mkdir -p config && cp config.yml.example config/config.yml
 
 # Mount that directory and run a container
-podman run -p 8080:8080 -v config:/etc/go-zones go-zones
+podman run -p 8080:8080 -v "$(pwd)"/config:/etc/go-zones/ go-zones
 ```
 
 ### File Mode Fronting to BIND
@@ -41,10 +41,10 @@ There is an extra `Containerfile.file-to-bind` container definition file that wi
 podman build -f Containerfile.file-to-BIND -t go-zones:file-to-bind .
 
 # Create a config directory locally with a Zones configuration YAML file for file mode operation
-mkdir config && cp zones.yml.example config/zones.yml
+mkdir -p config && cp zones.yml.example config/zones.yml
 
 # Mount that directory and run a container
-podman run -p 8053:8053 -v config:/etc/go-zones go-zones:file-to-bind
+podman run -p 8053:8053 -v "$(pwd)"/config:/etc/go-zones/ go-zones:file-to-bind
 ```
 
 ### Adding extra files to the container image

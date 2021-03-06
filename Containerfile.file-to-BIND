@@ -4,11 +4,19 @@ WORKDIR /opt/app-root/src
 COPY . .
 RUN go build
 
-FROM scratch AS bin
+FROM registry.fedoraproject.org/fedora-minimal:latest
 
-COPY --from=build /opt/app-root/src/go-zones /usr/local/bin/
 COPY container_root/ /
+COPY --from=build /opt/app-root/src/go-zones /usr/local/bin/
+
+RUN microdnf update -y \
+ && rm -rf /var/cache/yum
+
+RUN microdnf install -y bind \
+ && rm -rf /var/cache/yum \
+ && chmod -R 777 /opt/app-root/generated-conf \
+ && chmod +x /opt/app-root/start-file-to-bind.sh
 
 EXPOSE 8053
 
-CMD [ "go-zones -mode file -source /etc/go-zones/zones.yml -dir=/opt/app-root/generated-conf" ]
+CMD [ "/opt/app-root/start-file-to-bind.sh" ]
