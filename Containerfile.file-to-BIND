@@ -6,15 +6,16 @@ RUN go build
 
 FROM registry.fedoraproject.org/fedora-minimal:latest
 
-COPY container_root/ /
-COPY --from=build /opt/app-root/src/go-zones /usr/local/bin/
-
 RUN microdnf update -y \
  && rm -rf /var/cache/yum
 
 RUN microdnf install -y bind \
- && rm -rf /var/cache/yum \
- && chmod -R 777 /opt/app-root/generated-conf \
+ && rm -rf /var/cache/yum
+
+COPY container_root/ /
+COPY --from=build /opt/app-root/src/go-zones /usr/local/bin/
+
+RUN chmod -R 777 /opt/app-root/generated-conf \
  && chmod +x /opt/app-root/start-file-to-bind.sh
 
 EXPOSE 8053

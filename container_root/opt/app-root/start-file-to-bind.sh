@@ -3,9 +3,16 @@
 echo -e "\nGENERATING ZONES AND CONFIG...\n"
 go-zones -mode file -source /etc/go-zones/zones.yml -dir=/opt/app-root/generated-conf
 
+echo -e "\nCOMBINING CONFIGS...\n"
+cat /opt/app-root/generated-conf/config/*.internal.forward.conf > /opt/app-root/generated-conf/config/internal-forward-zones.conf
+cat /opt/app-root/generated-conf/config/*.external.forward.conf > /opt/app-root/generated-conf/config/external-forward-zones.conf
+
+cat /opt/app-root/generated-conf/config/*.internal.reverse.conf > /opt/app-root/generated-conf/config/internal-reverse-zones.conf
+cat /opt/app-root/generated-conf/config/*.external.reverse.conf > /opt/app-root/generated-conf/config/external-reverse-zones.conf
+
 echo -e "\nSTARTING BIND DNS SERVER...\n"
 
-export NAMEDCONF=/etc/named.conf
+export NAMEDCONF=/opt/app-root/vendor/bind/named.conf
 export KRB5_KTNAME=/etc/named.keytab
 export DISABLE_ZONE_CHECKING=no
 export OPTIONS=""

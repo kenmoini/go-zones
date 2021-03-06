@@ -19,13 +19,13 @@ func LoopThroughZonesForBindConfig(zones *Zones, basePath string) (bool, error) 
 				Name:    zone.Name,
 				Mode:    "forward",
 				Network: zone.Network,
-				Path:    basePath + "/config/" + zone.Name + "." + zone.Network + ".forward.conf"}
+				Path:    basePath + "/zones/" + zone.Name + "." + zone.Network + ".forward.zone"}
 
 			// Parse template
 			t, err := template.New("config").Parse(bindZoneConfigTemplate)
 			check(err)
 			// Create zone file
-			f, err := os.Create(BindConfigStructure.Path)
+			f, err := os.Create(basePath + "/config/" + zone.Name + "." + zone.Network + ".forward.conf")
 			check(err)
 			// Execute zone file templating
 			err = t.Execute(f, BindConfigStructure)
@@ -51,13 +51,13 @@ func LoopThroughZonesForBindConfig(zones *Zones, basePath string) (bool, error) 
 						Name:    reverseZone,
 						Mode:    "reverse",
 						Network: zone.Network,
-						Path:    basePath + "/config/" + reverseZone + zone.Network + ".reverse.conf"}
+						Path:    basePath + "/zones/" + reverseZone + zone.Network + ".reverse.zone"}
 
 					// Parse template
 					t, err := template.New("configrev").Parse(bindZoneConfigTemplate)
 					check(err)
 					// Create zone file
-					f, err := os.Create(ReverseBindConfigStructure.Path)
+					f, err := os.Create(basePath + "/config/" + reverseZone + zone.Network + ".reverse.conf")
 					check(err)
 					// Execute zone file templating
 					err = t.Execute(f, ReverseBindConfigStructure)
@@ -84,13 +84,13 @@ func LoopThroughZonesForBindConfig(zones *Zones, basePath string) (bool, error) 
 						Name:    shortReverse,
 						Mode:    "reverse",
 						Network: zone.Network,
-						Path:    basePath + "/config/" + shortReverse + zone.Network + ".reverse.conf"}
+						Path:    basePath + "/zones/" + shortReverse + zone.Network + ".reverse.zone"}
 
 					// Parse template
 					t, err := template.New("configrevv6").Parse(bindZoneConfigTemplate)
 					check(err)
-					// Create zone file
-					f, err := os.Create(ReverseBindConfigStructure.Path)
+					// Create zone config file
+					f, err := os.Create(basePath + "/config/" + shortReverse + zone.Network + ".reverse.conf")
 					check(err)
 					// Execute zone file templating
 					err = t.Execute(f, ReverseBindConfigStructure)
@@ -110,4 +110,5 @@ func LoopThroughZonesForBindConfig(zones *Zones, basePath string) (bool, error) 
 const bindZoneConfigTemplate = `zone "{{ .Name }}" {
 	type master;
 	file "{{ .Path }}";
-};`
+};
+`
