@@ -46,7 +46,7 @@ podman build -f Containerfile.file-to-BIND -t go-zones:file-to-bind .
 mkdir -p config && cp zones.yml.example config/zones.yml
 
 # Mount that directory and run a container
-podman run -p 8053:8053 -v "$(pwd)"/config:/etc/go-zones/ go-zones:file-to-bind
+podman run -d -p 8053:8053 -v "$(pwd)"/config:/etc/go-zones/ go-zones:file-to-bind
 ```
 
 #### Container-as-a-Service
@@ -127,10 +127,10 @@ mkdir -p /opt/service-containers/dns-core-1/volumes/etc-conf
 curl https://raw.githubusercontent.com/kenmoini/go-zones/main/zones.yml.example -o /opt/service-containers/dns-core-1/volumes/etc-conf/zones.yml
 
 # Test the container, assign it an IP in your bridged subnet range
-podman run --name dns-core-1 --network lanBridge --ip 192.168.42.10 -p 53 -v /opt/service-containers/dns-core-1/volumes/etc-conf:/etc/go-zones/ quay.io/kenmoini/go-zones:file-to-bind
+podman run -d --name dns-core-1 --network lanBridge --ip 192.168.42.10 -p 53 -v /opt/service-containers/dns-core-1/volumes/etc-conf:/etc/go-zones/ quay.io/kenmoini/go-zones:file-to-bind
 ```
 
-In a different terminal, test the BIND DNS Server running in the container, the query for example.net should look like the following from an internal network:
+Note that the `-d` option will launch the container into the background - test the BIND DNS Server running in the container, the query for example.net should look like the following from an internal network:
 
 ```bash
 dig @192.168.42.10 example.net
@@ -165,7 +165,7 @@ dns-core-2.example.labs. 86400  IN      A       192.168.42.3
 ;; MSG SIZE  rcvd: 178
 ```
 
-Note that you may need to handle some SELinux contexts *(like disabling it lol jk kinda not jk)*, and you'll need another tty to kill the spawned container because it does not respond to Ctrl+C (idk why) - also the pod will likely still be running even after `kill -9`'ing the podman execution so don't forget to check for the running container with `podman ps` and `podman kill dns-core-1 && podman rm dns-core-1`
+Note that you may need to handle some SELinux contexts *(like disabling it lol jk kinda not jk)* - also don't forget to clean up the running container with `podman ps` and `podman kill dns-core-1 && podman rm dns-core-1`
 
 ##### 4. Creating a Service
 
