@@ -1,0 +1,1 @@
+This touchfile just creates the /etc/go-zones/ directory when building a container image

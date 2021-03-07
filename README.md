@@ -17,6 +17,8 @@ $ ./go-zones -mode server -config=./config.yml
 
 ## Deployment - As a Container
 
+Pre-built container images can be found at https://quay.io/repository/kenmoini/go-zones
+
 GoZones comes with a set of `Containerfile`s that can be built with Docker or Podman with the following commands:
 
 ### Server Mode Container
