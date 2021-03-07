@@ -181,7 +181,7 @@ curl https://raw.githubusercontent.com/kenmoini/go-zones/main/go-zones-file-to-b
 systemctl daemon-reload
 
 # Start service
-systemctl start dns-core-1
+systemctl enable --now dns-core-1
 
 # Check service status and running container
 systemctl status dns-core-1
