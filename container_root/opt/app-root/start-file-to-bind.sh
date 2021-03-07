@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 echo -e "\nGENERATING ZONES AND CONFIG...\n"
 go-zones -mode file -source /etc/go-zones/zones.yml -dir=/opt/app-root/generated-conf
 
@@ -10,6 +12,10 @@ cat /opt/app-root/generated-conf/config/*.external.forward.conf > /opt/app-root/
 cat /opt/app-root/generated-conf/config/*.internal.reverse.conf > /opt/app-root/generated-conf/config/internal-reverse-zones.conf
 cat /opt/app-root/generated-conf/config/*.external.reverse.conf > /opt/app-root/generated-conf/config/external-reverse-zones.conf
 
+echo -e "\nVALIDATING BIND DNS SERVER CONFIGURATION...\n"
+
+if [ ! "$DISABLE_ZONE_CHECKING" == "yes" ]; then /usr/sbin/named-checkconf -z "$NAMEDCONF"; else echo "Checking of zone files is disabled"; fi
+
 echo -e "\nSTARTING BIND DNS SERVER...\n"
 
 export NAMEDCONF=/opt/app-root/vendor/bind/named.conf
@@ -17,6 +23,5 @@ export KRB5_KTNAME=/etc/named.keytab
 export DISABLE_ZONE_CHECKING=no
 export OPTIONS=""
 
-if [ ! "$DISABLE_ZONE_CHECKING" == "yes" ]; then /usr/sbin/named-checkconf -z "$NAMEDCONF"; else echo "Checking of zone files is disabled"; fi
 
-/usr/sbin/named -u named -c ${NAMEDCONF} $OPTIONS
+/usr/sbin/named -u named -c ${NAMEDCONF} $OPTIONS -g
