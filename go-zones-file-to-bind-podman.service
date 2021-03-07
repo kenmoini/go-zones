@@ -1,0 +1,18 @@
+[Unit]
+Description=dns-core-1 GoZones File-to-BIND Container
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+TimeoutStartSec=0
+
+ExecStartPre=/usr/bin/podman rm dns-core-1 -f -i
+ExecStart=/usr/bin/podman run --name dns-core-1 --network lanContainerBridge --ip 192.168.42.9 -p 53 -v /opt/service-containers/dns-core-1/volumes/etc-go-zones:/etc/go-zones/ quay.io/kenmoini/go-zones:file-to-bind
+ExecStop=/usr/bin/podman rm dns-core-1 -f -i
+
+Type=forking
+
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
