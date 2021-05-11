@@ -125,7 +125,7 @@ func CopyFile(src, dst string, BUFFERSIZE int64) error {
 
 	_, err = os.Stat(dst)
 	if err == nil {
-		return fmt.Errorf("File %s already exists", dst)
+		return fmt.Errorf("%s already exists", dst)
 	}
 
 	destination, err := os.Create(dst)

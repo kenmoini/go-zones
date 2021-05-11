@@ -30,6 +30,9 @@ zones:
         - name: www
           ttl: 3600
           value: 192.168.42.100
+        - name: "*.www"
+          ttl: 3600
+          value: 192.168.42.11
         - name: idm
           type: A
           ttl: 86400
@@ -42,6 +45,9 @@ zones:
         - name: dns-core-2
           ttl: 86400
           value: fdf4:e2e0:df12:a100::3
+        - name: "*.www"
+          ttl: 3600
+          value: fdf4:e2e0:df12:a100::11
 
       CNAME:
         - name: dns2

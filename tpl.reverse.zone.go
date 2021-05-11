@@ -53,7 +53,11 @@ func LoopThroughZonesForBindReverseV4ZonesFiles(zones *Zones, basePath string) (
 						Path:                  basePath + "/zones/" + reverseZone + "" + zone.Network + ".reverse.zone"}
 
 					// Parse template
-					t, err := template.New("revzones").Parse(bindReverseV4ZoneFileTemplate)
+					t, err := template.New("revzones").Funcs(template.FuncMap{
+						"hasNoWildcard": func(record ARecord) bool {
+							return !strings.Contains(record.Name, "*")
+						},
+					}).Parse(bindReverseV4ZoneFileTemplate)
 					check(err)
 					// Create zone file
 					f, err := os.Create(PackagedRevZoneStructure.Path)
@@ -97,7 +101,11 @@ func LoopThroughZonesForBindReverseV4ZonesFiles(zones *Zones, basePath string) (
 						Path:                  basePath + "/zones/" + shortReverse + "" + zone.Network + ".reverse.zone"}
 
 					// Parse template
-					t, err := template.New("rev6zones").Parse(bindReverseV6ZoneFileTemplate)
+					t, err := template.New("rev6zones").Funcs(template.FuncMap{
+						"hasNoWildcard": func(record AAAARecord) bool {
+							return !strings.Contains(record.Name, "*")
+						},
+					}).Parse(bindReverseV6ZoneFileTemplate)
 					check(err)
 					// Create zone file
 					f, err := os.Create(PackagedRevZoneStructure.Path)
@@ -182,7 +190,7 @@ $TTL {{ .TTL }}
 {{ .Anchor }} {{ .TTL }} IN NS {{ .Name }}.{{ .Domain }}{{ end }}{{ end }}
 
 {{ with .Zone.Records.A }}{{ range . }}
-{{ .RevValue $.Zone.SubnetV4 .Value }} {{ .TTL }} IN PTR {{ if ne .Name "@" }}{{ .Name }}.{{ end }}{{ $.Zone.Name }}.{{ end }}{{ end }}
+{{ if hasNoWildcard . }}{{ .RevValue $.Zone.SubnetV4 .Value }} {{ .TTL }} IN PTR {{ if ne .Name "@" }}{{ .Name }}.{{ end }}{{ $.Zone.Name }}.{{ end }}{{ end }}{{ end }}
 `
 
 const bindReverseV6ZoneFileTemplate = `$ORIGIN {{ .ReverseName }}
@@ -199,5 +207,5 @@ $TTL {{ .TTL }}
 {{ .Anchor }} {{ .TTL }} IN NS {{ .Name }}.{{ .Domain }}{{ end }}{{ end }}
 
 {{ with .Zone.Records.AAAA }}{{ range . }}
-{{ .Rev6Value $.Zone.SubnetV6 .Value }} {{ .TTL }} IN PTR {{ if ne .Name "@" }}{{ .Name }}.{{ end }}{{ $.Zone.Name }}.{{ end }}{{ end }}
+{{ if hasNoWildcard . }}{{ .Rev6Value $.Zone.SubnetV6 .Value }} {{ .TTL }} IN PTR {{ if ne .Name "@" }}{{ .Name }}.{{ end }}{{ $.Zone.Name }}.{{ end }}{{ end }}{{ end }}
 `
