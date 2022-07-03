@@ -77,10 +77,10 @@ func IsReverse(name string) int {
 	return 0
 }
 
-// reverseaddr returns the in-addr.arpa. or ip6.arpa. hostname of the IP
+// Reverseaddr returns the in-addr.arpa. or ip6.arpa. hostname of the IP
 // address addr suitable for rDNS (PTR) record lookup or an error if it fails
 // to parse the IP address.
-func reverseaddr(addr string) (arpa string, err error) {
+func Reverseaddr(addr string) (arpa string, err error) {
 	ip := net.ParseIP(addr)
 	if ip == nil {
 		return "", &net.DNSError{Err: "unrecognized address", Name: addr}
@@ -136,20 +136,20 @@ func reverse6(slice []string) string {
 }
 
 // reverseSlice flips a string slice around
-func reverseSlice(input []string) []string {
+func ReverseSlice(input []string) []string {
 	if len(input) == 0 {
 		return input
 	}
-	return append(reverseSlice(input[1:]), input[0])
+	return append(ReverseSlice(input[1:]), input[0])
 }
 
 // reverse6Short provides a shorter reverse IPV6 addres
-func reverse6Short(ip string) string {
+func Reverse6Short(ip string) string {
 	cidrv6 := strings.Split(ip, "/")
 	networkv6 := strings.Split(cidrv6[0], "::")
 	noColons := strings.ReplaceAll(networkv6[0], ":", "")
 	netChars := strings.Split(noColons, "")
-	revNetChars := reverseSlice(netChars)
+	revNetChars := ReverseSlice(netChars)
 	revNet := (strings.Join(revNetChars, ".") + IP6arpa)
 
 	revAddrv6, err := dns.ReverseAddr(cidrv6[0])
