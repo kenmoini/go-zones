@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi8/go-toolset:1.14.12 AS build
+FROM quay.io/polyglotsystems/golang-ubi:latest AS build
 
 WORKDIR /opt/app-root/src
 COPY . .
