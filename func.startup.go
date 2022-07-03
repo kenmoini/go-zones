@@ -45,10 +45,10 @@ func NewConfig(configPath CLIOpts) (*Config, error) {
 	return config, nil
 }
 
-// NewZones returns a new decoded Zones struct
-func NewZones(configPath CLIOpts) (*Zones, error) {
+// NewDNSServer returns a new decoded DNS Server configuration struct
+func NewDNSServer(configPath CLIOpts) (*RootYAML, error) {
 	// Create config structure
-	config := &Zones{}
+	config := &RootYAML{}
 
 	// Open config file
 	file, err := os.Open(configPath.Source)

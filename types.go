@@ -60,20 +60,56 @@ type Server struct {
 	} `yaml:"timeout"`
 }
 
-// Zones is the overall Zones struct
-type Zones struct {
-	Zones []ZonesYaml `yaml:"zones"`
+type RootYAML struct {
+	DNS DNS `yaml:"dns"`
 }
 
-// ZonesYaml is what each Zone is set up as
-type ZonesYaml struct {
+type TemplatePair struct {
+	DNS      DNS    `yaml:"dns"`
+	BasePath string `yaml:"base_path"`
+}
+
+// DNS contains the overall DNS configuration such as the different forwarders, views, and zones
+type DNS struct {
+	ACLs  []ACL  `yaml:"acls"`
+	Views []View `yaml:"views,omitempty"`
+	Zones []Zone `yaml:"zones"`
+}
+
+// ACL composes a name and network slice pair
+type ACL struct {
+	Name     string   `yaml:"name"`
+	Networks []string `yaml:"networks"`
+}
+
+// ServerConfig provides overrides for the server configuration
+
+// View contains the configuration for a DNS view that can set the networks that Zones are applied to
+type View struct {
+	Name           string          `yaml:"name"`
+	ACLs           []string        `yaml:"acls"`                      // ACL is the list of the ACLs that this view is applied to
+	Recursion      bool            `yaml:"recursion"`                 // Recursion is the recursion setting for this view
+	Forwarders     []string        `yaml:"forwarders,omitempty"`      // Forwarders is the list of DNS forwarders to use
+	IncludedZones  []string        `yaml:"zones,omitempty"`           // IncludedZones is a list of the named Zones that are set for this view
+	ForwardedZones []ForwardedZone `yaml:"forwarded_zones,omitempty"` // Forwarded Zones is a list of the Zones that are being forwarded with this view
+}
+
+// ForwardedZone contains the configuration for a DNS forwarder per view
+type ForwardedZone struct {
+	Zone       string   `yaml:"zone"`       // Zone is the domain of the zone to forward
+	Forwarders []string `yaml:"forwarders"` // Forwarders is the list of DNS forwarders to send requests to
+}
+
+// Zone is what each Zone is set up as
+type Zone struct {
 	Name             string  `yaml:"name"`
-	Network          string  `yaml:"network"`
+	Zone             string  `yaml:"zone"`
 	PrimaryDNSServer string  `yaml:"primary_dns_server"`
-	SubnetV4         string  `yaml:"subnet,omitempty"`
-	SubnetV6         string  `yaml:"subnet_v6,omitempty"`
-	TTL              int     `yaml:"ttl,omitempty"`
+	DefaultTTL       int     `yaml:"default_ttl,omitempty"`
 	Records          Records `yaml:"records,omitempty"`
+	//Network          string  `yaml:"network"`
+	//SubnetV4         string  `yaml:"subnet,omitempty"`
+	//SubnetV6         string  `yaml:"subnet_v6,omitempty"`
 }
 
 // Records is a collection of different record types
@@ -85,6 +121,7 @@ type Records struct {
 	CNAME []CNAMERecord `yaml:"CNAME,omitempty"`
 	TXT   []TXTRecord   `yaml:"TXT,omitempty"`
 	SRV   []SRVRecord   `yaml:"SRV,omitempty"`
+	PTR   []PTRRecord   `yaml:"PTR,omitempty"`
 }
 
 // NSRecord is an NS Record definition
@@ -100,6 +137,7 @@ type ARecord struct {
 	Name  string `yaml:"name"`
 	Value string `yaml:"value"`
 	TTL   int    `yaml:"ttl,omitempty"`
+	NoPTR bool   `yaml:"no_ptr,omitempty"`
 }
 
 // AAAARecord is an AAAA Record definition
@@ -141,6 +179,13 @@ type TXTRecord struct {
 	TTL   int    `yaml:"ttl,omitempty"`
 }
 
+// PTRRecord is an TXT Record definition
+type PTRRecord struct {
+	Name  string `yaml:"name"`
+	Value string `yaml:"value"`
+	TTL   int    `yaml:"ttl,omitempty"`
+}
+
 // BindZoneConfig will setup the bind config for zones
 type BindZoneConfig struct {
 	Network string // Network type (internal/external/etc)
@@ -151,7 +196,22 @@ type BindZoneConfig struct {
 
 // PackagedZone is what is fed to the Zone Template
 type PackagedZone struct {
-	Zone                  ZonesYaml
+	Zone                  Zone
+	TTL                   int
+	Mode                  string
+	SerialNumber          string
+	Path                  string
+	DefaultZoneSOARefresh string
+	DefaultZoneSOARetry   string
+	DefaultZoneSOAExpire  string
+	DefaultZoneSOAMinTTL  int
+	MaxLengths            MaxLengths
+}
+
+// PackagedReverseZone is what is fed to the Reverse Zone Template
+type PackagedReverseZone struct {
+	Zone                  Zone
+	ReverseName           string
 	TTL                   int
 	Mode                  string
 	SerialNumber          string
@@ -162,16 +222,14 @@ type PackagedZone struct {
 	DefaultZoneSOAMinTTL  int
 }
 
-// PackagedReverseZone is what is fed to the Reverse Zone Template
-type PackagedReverseZone struct {
-	Zone                  ZonesYaml
-	ReverseName           string
-	TTL                   int
-	Mode                  string
-	SerialNumber          string
-	Path                  string
-	DefaultZoneSOARefresh string
-	DefaultZoneSOARetry   string
-	DefaultZoneSOAExpire  string
-	DefaultZoneSOAMinTTL  int
+// MaxLengths is a a map of the max lengths for each record type
+type MaxLengths struct {
+	NS    map[string]int
+	A     map[string]int
+	AAAA  map[string]int
+	MX    map[string]int
+	CNAME map[string]int
+	TXT   map[string]int
+	SRV   map[string]int
+	PTR   map[string]int
 }

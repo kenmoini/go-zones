@@ -27,15 +27,26 @@ func (config CLIOpts) FileModeApplication() {
 	CreateDirectory(absoluteTargetDirectory + "/zones")
 
 	// Read in Zones file
-	zones, err := NewZones(config)
+	server, err := NewDNSServer(config)
 	check(err)
 
-	_, err = LoopThroughZonesForBindConfig(zones, absoluteTargetDirectory)
+	//zones := server.Zones
+
+	_, err = GenerateBindConfig(&server.DNS, absoluteTargetDirectory)
 	check(err)
 
-	_, err = LoopThroughZonesForBindZonesFiles(zones, absoluteTargetDirectory)
+	_, err = GenerateBindZoneConfigFile(&server.DNS, absoluteTargetDirectory)
 	check(err)
 
-	_, err = LoopThroughZonesForBindReverseV4ZonesFiles(zones, absoluteTargetDirectory)
+	_, err = GenerateBindZoneFiles(&server.DNS, absoluteTargetDirectory)
 	check(err)
+
+	//_, err = LoopThroughZonesForBindConfig(server, absoluteTargetDirectory)
+	//check(err)
+
+	//_, err = LoopThroughZonesForBindZonesFiles(&server.DNS.Zones, absoluteTargetDirectory)
+	//check(err)
+
+	//_, err = LoopThroughZonesForBindReverseV4ZonesFiles(zones, absoluteTargetDirectory)
+	//check(err)
 }
