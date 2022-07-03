@@ -65,8 +65,9 @@ type RootYAML struct {
 }
 
 type TemplatePair struct {
-	DNS      DNS    `yaml:"dns"`
-	BasePath string `yaml:"base_path"`
+	DNS         DNS                 `yaml:"dns"`
+	BasePath    string              `yaml:"base_path"`
+	RevViewPair map[string][]string `yaml:"revViewPair,omitempty"`
 }
 
 // DNS contains the overall DNS configuration such as the different forwarders, views, and zones
@@ -92,6 +93,11 @@ type View struct {
 	Forwarders     []string        `yaml:"forwarders,omitempty"`      // Forwarders is the list of DNS forwarders to use
 	IncludedZones  []string        `yaml:"zones,omitempty"`           // IncludedZones is a list of the named Zones that are set for this view
 	ForwardedZones []ForwardedZone `yaml:"forwarded_zones,omitempty"` // Forwarded Zones is a list of the Zones that are being forwarded with this view
+}
+
+type ReverseViewPair struct {
+	View         string   `yaml:"view"`
+	ReverseZones []string `yaml:"reverse"`
 }
 
 // ForwardedZone contains the configuration for a DNS forwarder per view
@@ -181,9 +187,10 @@ type TXTRecord struct {
 
 // PTRRecord is an TXT Record definition
 type PTRRecord struct {
-	Name  string `yaml:"name"`
-	Value string `yaml:"value"`
-	TTL   int    `yaml:"ttl,omitempty"`
+	Name              string `yaml:"name"`
+	Value             string `yaml:"value"`
+	TargetReverseZone string `yaml:"target_reverse_zone"`
+	TTL               int    `yaml:"ttl,omitempty"`
 }
 
 // BindZoneConfig will setup the bind config for zones
@@ -232,4 +239,8 @@ type MaxLengths struct {
 	TXT   map[string]int
 	SRV   map[string]int
 	PTR   map[string]int
+}
+
+type ReverseZoneRecords struct {
+	PTR []PTRRecord
 }

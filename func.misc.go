@@ -3,16 +3,15 @@ package main
 import (
 	"math"
 	"strings"
-
-	"github.com/gosimple/slug"
+	//"github.com/gosimple/slug"
 )
 
 // slugger slugs a string
-func slugger(textToSlug string) string {
-	return slug.Make(textToSlug)
-}
+//func slugger(textToSlug string) string {
+//	return slug.Make(textToSlug)
+//}
 
-// Convert unsigned integer to decimal string.
+// uitoa - Convert unsigned integer to decimal string.
 func uitoa(val uint) string {
 	if val == 0 { // avoid string allocation
 		return "0"
@@ -65,4 +64,13 @@ func StrPad(input string, padLength int, padString string, padType string) strin
 	}
 
 	return output
+}
+
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
 }

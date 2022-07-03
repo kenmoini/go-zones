@@ -40,7 +40,7 @@ func NewConfig(configPath CLIOpts) (*Config, error) {
 		return nil, err
 	}
 
-	readConfig = config
+	//readConfig = config
 
 	return config, nil
 }

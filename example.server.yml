@@ -75,20 +75,24 @@ dns:
             domain: example.labs.
             anchor: '@'
         A:
+          # if an A or AAAA record has a full CIDR-slash notation, it will also generate the PTR records automatically
           - name: dns-core-1
             ttl: 86400
-            value: 192.168.42.2
+            value: 192.168.42.2/24
           - name: dns-core-2
             ttl: 86400
-            value: 192.168.42.3
+            value: 192.168.42.3/24
           - name: '@'
-            value: 192.168.42.100
+            value: 192.168.42.100/24
           - name: www
-            value: 192.168.42.100
+            value: 192.168.42.100/24
           - name: "*.www"
-            value: 192.168.42.11
+            value: 192.168.42.11/24
           - name: idm
-            value: 192.168.42.10
+            value: 10.12.0.10/8
+          - name: priv
+            value: 192.168.0.11/16
+
 
         AAAA:
           - name: dns-core-1
@@ -161,7 +165,7 @@ dns:
           - name: '@'
             value: 1.2.3.45
           - name: www
-            value: 1.2.3.45
+            value: 1.2.3.45/24
 
     - name: example.net
       zone: example.net
@@ -179,8 +183,8 @@ dns:
             anchor: '@'
         A:
           - name: '@'
-            value: 192.168.42.100
+            value: 192.168.42.100/16
           - name: www
-            value: 192.168.42.100
+            value: 192.168.42.100/24
           - name: '*'
-            value: 192.168.42.169
+            value: 192.168.42.169/24

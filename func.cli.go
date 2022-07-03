@@ -32,7 +32,10 @@ func (config CLIOpts) FileModeApplication() {
 
 	//zones := server.Zones
 
-	_, err = GenerateBindConfig(&server.DNS, absoluteTargetDirectory)
+	revViewPair, err := GenerateBindReverseZoneFiles(&server.DNS, absoluteTargetDirectory)
+	check(err)
+
+	_, err = GenerateBindConfig(&server.DNS, absoluteTargetDirectory, revViewPair)
 	check(err)
 
 	_, err = GenerateBindZoneConfigFile(&server.DNS, absoluteTargetDirectory)

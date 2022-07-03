@@ -27,14 +27,14 @@ func Stoerr(s string) error {
 }
 
 // logStringAsErrorToStdout wraps a string in an error object and pushes to stdout
-func logStringAsErrorToStdout(s string) {
-	check(&errorString{s})
-}
+//func logStringAsErrorToStdout(s string) {
+//	check(&errorString{s})
+//}
 
 // logStringAsErrorToStderr wraps a string in an error object and pushes to stdout
-func logStringAsErrorToStderr(s string) {
-	checkAndFail(&errorString{s})
-}
+//func logStringAsErrorToStderr(s string) {
+//	checkAndFail(&errorString{s})
+//}
 
 // check does error checking
 func check(e error) {

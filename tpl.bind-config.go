@@ -63,15 +63,22 @@ view "{{ $view.Name }}" {
 	include "{{ $path }}/config/{{ $zone }}.zone.conf";
 {{- end }}{{ end }}
 
+{{- with $.RevViewPair }}{{ range $i, $revView := . }}
+{{- if eq $i $view.Name }}{{- range $j, $revZone := $revView }}
+
+	# Reverse View #{{ $j }} - {{ $revZone }}
+	include "{{ $path }}/config/{{ $revZone }}.zone.conf";
+{{- end }}{{ end }}{{ end }}{{ end }}
+
 };
 {{ end }}{{ end }}
 `
 
 // GenerateBindConfigFile generates the bind config bootstrap file
-func GenerateBindConfig(server *DNS, basePath string) (bool, error) {
+func GenerateBindConfig(server *DNS, basePath string, revViewPair map[string][]string) (bool, error) {
 
 	//log.Printf("debug: %v", server)
-	templatePair := TemplatePair{DNS: *server, BasePath: basePath}
+	templatePair := TemplatePair{DNS: *server, BasePath: basePath, RevViewPair: revViewPair}
 
 	// Create template object
 	t, err := template.New("config").Parse(bindConfigTemplate)
@@ -124,6 +131,33 @@ func GenerateBindZoneConfigFile(server *DNS, basePath string) (bool, error) {
 
 		// Execute zone file templating
 		templatePair := bindZonePair{Zone: zone.Zone, Path: basePath + "/zones/" + zone.Name + ".zone"}
+
+		err = t.Execute(f, templatePair)
+		check(err)
+
+		// Close and write file
+		f.Close()
+	}
+
+	return true, nil
+}
+
+// GenerateBindZoneReverseConfigFile generates the bind zone files that are
+//  included in the views in the bootstrap config file
+func GenerateBindZoneReverseConfigFile(server map[string][]PTRRecord, basePath string) (bool, error) {
+
+	//log.Printf("debug: %v", zone)
+	for k := range server {
+		// Create template object
+		t, err := template.New("config").Parse(bindZoneIncludeFileTemplate)
+		check(err)
+
+		// Create a zone include config file
+		f, err := os.Create(basePath + "/config/" + k + ".zone.conf")
+		check(err)
+
+		// Execute zone file templating
+		templatePair := bindZonePair{Zone: k, Path: basePath + "/zones/" + k + ".zone"}
 
 		err = t.Execute(f, templatePair)
 		check(err)
