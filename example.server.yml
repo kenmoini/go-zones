@@ -46,6 +46,7 @@ dns:
       # zones is a list of named Zones to associate with this view
       zones:
         - internal-example-labs
+        - example.net
 
     # Example of non-recursive, authoritative view only eg for hosting a DNS server on the Internet
     - name: externalNetworks
@@ -81,17 +82,12 @@ dns:
             ttl: 86400
             value: 192.168.42.3
           - name: '@'
-            ttl: 3600
             value: 192.168.42.100
           - name: www
-            ttl: 3600
             value: 192.168.42.100
           - name: "*.www"
-            ttl: 3600
             value: 192.168.42.11
           - name: idm
-            type: A
-            ttl: 86400
             value: 192.168.42.10
 
         AAAA:
@@ -102,33 +98,28 @@ dns:
             ttl: 86400
             value: fdf4:e2e0:df12:a100::3
           - name: "*.www"
-            ttl: 3600
+            ttl: 7200
             value: fdf4:e2e0:df12:a100::11
 
         CNAME:
           - name: dns2
-            ttl: 6400
             value: dns-core-2.example.labs.
 
         MX:
           - name: '@'
-            ttl: 3600
             priority: 1
             value: ASPMX.L.GOOGLE.COM.
           - name: '@'
-            ttl: 3600
             priority: 5
             value: ALT1.ASPMX.L.GOOGLE.COM.
           - name: '@'
-            ttl: 3600
             priority: 5
             value: ALT2.ASPMX.L.GOOGLE.COM.
           - name: '@'
-            ttl: 3600
             priority: 10
             value: ALT3.ASPMX.L.GOOGLE.COM.
           - name: '@'
-            ttl: 3600
+            ttl: 36000
             priority: 10
             value: ALT4.ASPMX.L.GOOGLE.COM.
 
@@ -136,13 +127,14 @@ dns:
           - name: '@'
             ttl: 6400
             value: "v=spf1 includespf.dynect.net ~all"
+          - name: 'mail'
+            value: "google-auth"
 
         SRV:
           - name: _ntp._udp
             value: idm.example.labs.
             port: 123
             priority: 0
-            ttl: 6400
             weight: 100
 
     - name: external-example-labs
@@ -162,18 +154,17 @@ dns:
         A:
           - name: dns-core-1
             ttl: 86400
-            value: 1.2.3.4
+            value: 1.2.3.40
           - name: dns-core-2
             ttl: 86400
-            value: 1.2.3.5
+            value: 1.2.3.50
           - name: '@'
-            ttl: 3600
             value: 1.2.3.45
           - name: www
-            ttl: 3600
             value: 1.2.3.45
 
     - name: example.net
+      zone: example.net
       primary_dns_server: dns-core-1.example.labs
       default_ttl: 3600
       records:
@@ -188,11 +179,8 @@ dns:
             anchor: '@'
         A:
           - name: '@'
-            ttl: 3600
             value: 192.168.42.100
           - name: www
-            ttl: 3600
             value: 192.168.42.100
           - name: '*'
-            ttl: 3600
             value: 192.168.42.169
