@@ -39,7 +39,7 @@ jobs:
           type=raw,value=file-to-bind-latest
 
     - name: Login to Quay
-      uses: docker/login-action@v1
+      uses: docker/login-action@v2
       with:
         registry: quay.io
         username: "${{ secrets.REGISTRY_USERNAME }}"
