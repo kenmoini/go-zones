@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -85,7 +86,7 @@ func GenerateBindZoneFiles(dnsServer *DNS, basePath string) (bool, error) {
 			DefaultZoneSOAExpire:  defaultZoneSOAExpire,
 			DefaultZoneSOAMinTTL:  defaultZoneSOAMinTTL,
 			Mode:                  "forward",
-			Path:                  basePath + "/zones/forward." + zone.Name + ".zone",
+			Path:                  basePath + "/zones/fwd." + zone.Name + ".zone",
 			MaxLengths:            maxLengths}
 
 		// Parse template
@@ -98,12 +99,16 @@ func GenerateBindZoneFiles(dnsServer *DNS, basePath string) (bool, error) {
 			},
 		}).Parse(bindZoneFileTemplate)
 		check(err)
+
 		// Create zone file
 		f, err := os.Create(PackagedZoneStructure.Path)
 		check(err)
+		log.Println("Creating forward zone file: " + PackagedZoneStructure.Path)
+
 		// Execute zone file templating
 		err = t.Execute(f, PackagedZoneStructure)
 		check(err)
+
 		// Close and write file
 		f.Close()
 

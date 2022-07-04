@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"text/template"
 )
@@ -60,14 +61,14 @@ view "{{ $view.Name }}" {
 {{- with $view.IncludedZones }}{{ range $i, $zone := . }}
 
 	# Authoritative Zone #{{ $i }} - {{ $zone }}
-	include "{{ $path }}/config/{{ $zone }}.zone.conf";
+	include "{{ $path }}/config/fwd.{{ $zone }}.zone.conf";
 {{- end }}{{ end }}
 
 {{- with $.RevViewPair }}{{ range $i, $revView := . }}
 {{- if eq $i $view.Name }}{{- range $j, $revZone := $revView }}
 
 	# Reverse View #{{ $j }} - {{ $revZone }}
-	include "{{ $path }}/config/{{ $revZone }}.zone.conf";
+	include "{{ $path }}/config/rev.{{ $revZone }}.zone.conf";
 {{- end }}{{ end }}{{ end }}{{ end }}
 
 };
@@ -87,6 +88,7 @@ func GenerateBindConfig(server *DNS, basePath string, revViewPair map[string][]s
 	// Create go-zones bootstrap config file
 	f, err := os.Create(basePath + "/config/go-zones-bootstrap.conf")
 	check(err)
+	log.Println("Creating BIND bootstrap include file: " + basePath + "/config/go-zones-bootstrap.conf")
 
 	// Execute zone file templating
 	err = t.Execute(f, templatePair)
@@ -126,11 +128,11 @@ func GenerateBindZoneConfigFile(server *DNS, basePath string) (bool, error) {
 		check(err)
 
 		// Create a zone include config file
-		f, err := os.Create(basePath + "/config/" + zone.Name + ".zone.conf")
+		f, err := os.Create(basePath + "/config/fwd." + zone.Name + ".zone.conf")
 		check(err)
 
 		// Execute zone file templating
-		templatePair := bindZonePair{Zone: zone.Zone, Path: basePath + "/zones/" + zone.Name + ".zone"}
+		templatePair := bindZonePair{Zone: zone.Zone, Path: basePath + "/zones/fwd." + zone.Name + ".zone"}
 
 		err = t.Execute(f, templatePair)
 		check(err)
@@ -153,11 +155,11 @@ func GenerateBindZoneReverseConfigFile(server map[string][]PTRRecord, basePath s
 		check(err)
 
 		// Create a zone include config file
-		f, err := os.Create(basePath + "/config/" + k + ".zone.conf")
+		f, err := os.Create(basePath + "/config/rev." + k + ".zone.conf")
 		check(err)
 
 		// Execute zone file templating
-		templatePair := bindZonePair{Zone: k, Path: basePath + "/zones/" + k + ".zone"}
+		templatePair := bindZonePair{Zone: k, Path: basePath + "/zones/rev." + k + ".zone"}
 
 		err = t.Execute(f, templatePair)
 		check(err)
