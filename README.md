@@ -16,7 +16,7 @@ GoZones can operate in single-file input/output batches, or via an HTTP server, 
 # File Mode - input source, output target (default mode)
 $ ./go-zones -source=./example.server.yml -dir=./generated
 
-# Server Mode
+# Server Mode - listens on a port and responds with the generated assets
 $ ./go-zones -mode server -config=./example.config.yml
 ```
 
