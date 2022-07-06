@@ -130,7 +130,7 @@ $TTL {{ .TTL }}
 
 {{- with .Zone.Records.NS }}
 
-# === NS Records ====================================================
+; === NS Records ====================================================
 {{- range . }}
 {{ $.MaxLengths.GetPadded "NS" "Anchor" .Anchor 0 }} {{ $.MaxLengths.GetPadded "NS" "TTL" "" (ttlSwap .TTL) }} IN NS {{ $.MaxLengths.GetPadded "NS" "Name" .Name 0 }}.{{ $.MaxLengths.GetPadded "NS" "Domain" .Domain 0 }}
 {{- end }}
@@ -138,7 +138,7 @@ $TTL {{ .TTL }}
 
 {{- with .Zone.Records.MX }}
 
-# === MX Records ====================================================
+; === MX Records ====================================================
 {{- range . }}
 {{ $.MaxLengths.GetPadded "MX" "Name" .Name 0 }} {{ $.MaxLengths.GetPadded "MX" "TTL" "" (ttlSwap .TTL) }} IN MX {{ $maxLengths.GetPadded "MX" "Priority" "" .Priority }} {{ $maxLengths.GetPadded "MX" "Value" .Value 0 }}
 {{- end }}
@@ -146,7 +146,7 @@ $TTL {{ .TTL }}
 
 {{- with .Zone.Records.A }}
 
-# === A Records =====================================================
+; === A Records =====================================================
 {{- range . }}
 {{ $.MaxLengths.GetPadded "A" "Name" .Name 0 }} {{ $.MaxLengths.GetPadded "A" "TTL" "" (ttlSwap .TTL) }} IN A {{ $maxLengths.GetPadded "A" "Value" .Value 0 }}
 {{- end }}
@@ -154,7 +154,7 @@ $TTL {{ .TTL }}
 
 {{- with .Zone.Records.AAAA }}
 
-# === AAAA Records ==================================================
+; === AAAA Records ==================================================
 {{- range . }}
 {{ $.MaxLengths.GetPadded "AAAA" "Name" .Name 0 }} {{ $.MaxLengths.GetPadded "AAAA" "TTL" "" (ttlSwap .TTL) }} IN AAAA {{ $.MaxLengths.GetPadded "AAAA" "Value" .Value 0 }}
 {{- end }}
@@ -162,7 +162,7 @@ $TTL {{ .TTL }}
 
 {{- with .Zone.Records.CNAME }}
 
-# === CNAME Records =================================================
+; === CNAME Records =================================================
 {{- range . }}
 {{ $.MaxLengths.GetPadded "CNAME" "Name" .Name 0 }} {{ $.MaxLengths.GetPadded "CNAME" "TTL" "" (ttlSwap .TTL) }} IN CNAME {{ $.MaxLengths.GetPadded "CNAME" "Value" .Value 0 }}
 {{- end }}
@@ -170,7 +170,7 @@ $TTL {{ .TTL }}
 
 {{- with .Zone.Records.TXT }}
 
-# === TXT Records ===================================================
+; === TXT Records ===================================================
 {{- range . }}
 {{ $.MaxLengths.GetPadded "TXT" "Name" .Name 0 }} {{ $.MaxLengths.GetPadded "TXT" "TTL" "" (ttlSwap .TTL) }} IN TXT {{ $.MaxLengths.GetPadded "TXT" "Value" .Value 0 }}
 {{- end }}
@@ -178,7 +178,7 @@ $TTL {{ .TTL }}
 
 {{- with .Zone.Records.SRV }}
 
-# === SRV Records ===================================================
+; === SRV Records ===================================================
 {{- range . }}
 {{ $.MaxLengths.GetPadded "TXT" "Name" .Name 0 }} {{ $.MaxLengths.GetPadded "TXT" "TTL" "" (ttlSwap .TTL) }} IN SRV {{ $.MaxLengths.GetPadded "SRV" "Priority" "" .Priority }} {{ $.MaxLengths.GetPadded "SRV" "Weight" "" .Weight }} {{ $.MaxLengths.GetPadded "SRV" "Port" "" .Port }} {{ $.MaxLengths.GetPadded "SRV" "Value" .Value 0 }}
 {{- end }}
@@ -186,7 +186,7 @@ $TTL {{ .TTL }}
 
 {{- with .Zone.Records.PTR }}
 
-# === PTR Records ===================================================
+; === PTR Records ===================================================
 {{- range . }}
 {{ $.MaxLengths.GetPadded "PTR" "Name" .Name 0 }} IN PTR {{ $.MaxLengths.GetPadded "PTR" "Value" .Value 0 }}
 {{- end }}

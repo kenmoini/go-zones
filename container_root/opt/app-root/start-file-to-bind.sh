@@ -8,6 +8,12 @@ export DISABLE_ZONE_CHECKING=no
 export OPTIONS=""
 export SERVER_CONFIG_YAML="/etc/go-zones/server.yml"
 export GENERATED_DIR="/opt/app-root/generated-conf"
+export HALT_STARTUP="false"
+
+## Useful for runtime container debugging
+while [ "$HALT_STARTUP" == "true" ]; do
+  sleep 3600
+done
 
 echo -e "\nGENERATING ZONES AND CONFIG...\n"
 go-zones -mode file -source "${SERVER_CONFIG_YAML}" -dir "${GENERATED_DIR}"

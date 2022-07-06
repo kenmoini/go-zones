@@ -24,6 +24,7 @@ func GenerateBindReverseZoneFiles(dnsServer *DNS, basePath string) (map[string][
 	var reverseViewPair = make(map[string][]string)
 	var reverseZoneTTLs = make(map[string]ZoneTTLs)
 	var reverseZonePrimaryDNSServer = make(map[string]string)
+	var reverseZoneNSRecords = make(map[string][]NSRecord)
 
 	// Setup serial number from the current unix time
 	r_longTime := strconv.FormatInt(time.Now().UnixNano(), 10)
@@ -100,6 +101,7 @@ func GenerateBindReverseZoneFiles(dnsServer *DNS, basePath string) (map[string][
 									DefaultTTL: recordTTL,
 								}
 								reverseZonePrimaryDNSServer[revZoneName] = zone.PrimaryDNSServer
+								reverseZoneNSRecords[revZoneName] = zone.Records.NS
 							}
 						}
 
@@ -151,6 +153,7 @@ func GenerateBindReverseZoneFiles(dnsServer *DNS, basePath string) (map[string][
 				DefaultTTL:       zoneTTL,
 				Records: Records{
 					PTR: records,
+					NS:  reverseZoneNSRecords[reverseZone],
 				}}
 
 			// Calculate the max lengths for the zone records

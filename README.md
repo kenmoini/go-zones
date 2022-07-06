@@ -48,10 +48,10 @@ There is an extra `Containerfile.file-to-bind` container definition file that wi
 podman build -f Containerfile.file-to-BIND -t go-zones:file-to-bind .
 
 # Create a config directory locally with a Zones configuration YAML file for file mode operation
-mkdir -p config && cp example.server.yml config/zones.yml
+mkdir -p config && cp example.server.yml config/server.yml
 
 # Mount that directory and run a container
-podman run -d -p 8053:8053 -v "$(pwd)"/config:/etc/go-zones/ go-zones:file-to-bind
+podman run --name go-zones-ftb -d -p 8053:8053 -v "$(pwd)"/config:/etc/go-zones/ go-zones:file-to-bind
 ```
 
 #### Container-as-a-Service
