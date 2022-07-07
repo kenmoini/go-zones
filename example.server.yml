@@ -78,6 +78,7 @@ dns:
             anchor: '@'
         A:
           # if an A or AAAA record has a full CIDR-slash notation, it will also generate the PTR records automatically
+          ## Do not add a CIDR-slash notation to records with wildcards
           - name: dns-core-1
             ttl: 86400
             value: 192.168.42.2/24
@@ -87,9 +88,10 @@ dns:
           - name: '@'
             value: 192.168.42.100/24
           - name: www
-            value: 192.168.42.100/24
+            value: 192.168.42.100
+          # Wildcard certificates need to be wrapped in quotes
           - name: "*.www"
-            value: 192.168.42.11/24
+            value: 192.168.42.11
           - name: idm
             value: 10.12.0.10/8
           - name: priv
@@ -192,9 +194,9 @@ dns:
           - name: '@'
             value: 192.168.42.100/16
           - name: www
-            value: 192.168.42.100/24
+            value: 192.168.42.100
           - name: '*'
-            value: 192.168.42.169/24
+            value: 192.168.42.169
 
     - name: lab-kemo-network
       zone: lab.kemo.network
@@ -229,30 +231,30 @@ dns:
             value: 192.168.77.71/24
           - name: api.sno-ocp
             ttl: 6400
-            value: 192.168.77.71/24
+            value: 192.168.77.71
           - name: "*.apps.sno-ocp"
             ttl: 6400
-            value: 192.168.77.71/24
+            value: 192.168.77.71
 
           - name: core-ocp
             ttl: 6400
             value: 192.168.51.72/24
           - name: api.core-ocp
             ttl: 6400
-            value: 192.168.51.72/24
+            value: 192.168.51.72
           - name: "*.apps.core-ocp"
             ttl: 6400
-            value: 192.168.51.73/24
+            value: 192.168.51.73
 
           - name: loe-ocp
             ttl: 6400
             value: 192.168.42.74/24
           - name: api.loe-ocp
             ttl: 6400
-            value: 192.168.42.74/24
+            value: 192.168.42.74
           - name: "*.apps.loe-ocp"
             ttl: 6400
-            value: 192.168.42.75/24
+            value: 192.168.42.75
 
           - name: vsphere-ocp
             ttl: 6400
@@ -283,4 +285,4 @@ dns:
 
           - name: pfsense
             ttl: 6400
-            value: 192.168.77.1
+            value: 192.168.77.1/24
