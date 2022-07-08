@@ -64,7 +64,7 @@ jobs:
         tags: |
           type=raw,value=latest-test
 
-    - name: Build and push
+    - name: Build and test
       uses: docker/build-push-action@v3
       with:
         context: .
