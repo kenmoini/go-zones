@@ -101,13 +101,16 @@ dns:
         AAAA:
           - name: dns-core-1
             ttl: 86400
-            value: fdf4:e2e0:df12:a100::2
+            value: fdf4:e2e0:df12:a100::2/64
           - name: dns-core-2
             ttl: 86400
-            value: fdf4:e2e0:df12:a100::3
+            value: fdf4:e2e0:df12:a100::3/64
           - name: "*.www"
             ttl: 7200
             value: fdf4:e2e0:df12:a100::11
+          - name: www
+            ttl: 7200
+            value: fdf4:e2e0:df12:a100::11/64
 
         CNAME:
           - name: dns1
@@ -197,6 +200,14 @@ dns:
             value: 192.168.42.100
           - name: '*'
             value: 192.168.42.169
+
+        AAAA:
+          - name: www
+            ttl: 86400
+            value: fdf4:e2e0:df12:a142::100/64
+          - name: dns-core-2
+            ttl: 86400
+            value: fdf4:e2e0:df12:a100::3/64
 
     - name: lab-kemo-network
       zone: lab.kemo.network
