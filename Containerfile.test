@@ -1,0 +1,26 @@
+### BUILD
+FROM quay.io/polyglotsystems/golang-ubi:latest AS build
+
+WORKDIR /opt/app-root/src
+COPY . .
+RUN go build
+
+### RUN TESTS
+FROM registry.fedoraproject.org/fedora-minimal:latest
+
+RUN microdnf update -y \
+ && rm -rf /var/cache/yum
+
+RUN microdnf install -y bind \
+ && rm -rf /var/cache/yum
+
+COPY container_root/ /
+COPY --from=build /opt/app-root/src/go-zones /usr/local/bin/
+
+RUN chmod -R 777 /opt/app-root/generated-conf \
+ && chmod +x /opt/app-root/start-file-to-bind.sh
+
+EXPOSE 53
+EXPOSE 8053
+
+RUN /opt/app-root/start-file-to-bind-test.sh

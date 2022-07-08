@@ -1,0 +1,288 @@
+# example DNS Server Configuration
+dns:
+  ##########################################################################################
+  # acls is a list of named network groups
+  acls:
+    # privatenets can respond to internal client queries with an internal IP
+    - name: privatenets
+      networks:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16
+        - localhost
+        - localnets
+    # externalwan would match any external network
+    - name: externalwan
+      networks:
+        - any
+        - "!10.0.0.0/8"
+        - "!172.16.0.0/12"
+        - "!192.168.0.0/16"
+        - "!localhost"
+        - "!localnets"
+
+  ##########################################################################################
+  # views is a list of named views that glue together acls and zones
+  views:
+    - name: internalNetworks
+      # acls is a list of the named ACLs from above that this view will be applied to
+      acls:
+        - privatenets
+      # recursion is a boolean that controls whether this view will allow recursive DNS queries
+      recursion: true
+      # if recursion is true, then you can provide forwarders to be used for recursive queries 
+      #  such as a PiHole DNS server or just something like Cloudflare DNS at 1.0.0.1 and 1.1.1.1
+      forwarders:
+        - 1.1.1.1
+        - 1.0.0.1
+      # forwarded_zones is a list of zones and their authoritative nameservers to forward queries to
+      forwarded_zones:
+        - zone: tosins-lab.com
+          forwarders:
+            - 192.168.1.56
+        - zone: dsal.labs
+          forwarders:
+            - 10.1.241.136
+      # zones is a list of named Zones to associate with this view
+      zones:
+        - internal-example-labs
+        - example.net
+        - lab-kemo-network
+        - d77-kemo-labs
+
+    # Example of non-recursive, authoritative view only eg for hosting a DNS server on the Internet
+    - name: externalNetworks
+      acls:
+        - externalwan
+      recursion: false
+      # zones is a list of named Zones to associate with this view
+      zones:
+        - external-example-labs
+
+  ##########################################################################################
+  ## Assumes two authoritative dns servers at dns-core-1.example.labs and dns-core-2.example.labs serving both zones
+  zones:
+    - name: internal-example-labs
+      zone: example.labs
+      primary_dns_server: dns-core-1.example.labs
+      default_ttl: 3600
+      records:
+        NS:
+          - name: dns-core-1
+            ttl: 86400
+            domain: example.labs.
+            anchor: '@'
+          - name: dns-core-2
+            ttl: 86400
+            domain: example.labs.
+            anchor: '@'
+        A:
+          # if an A or AAAA record has a full CIDR-slash notation, it will also generate the PTR records automatically
+          ## Do not add a CIDR-slash notation to records with wildcards
+          - name: dns-core-1
+            ttl: 86400
+            value: 192.168.42.2/24
+          - name: dns-core-2
+            ttl: 86400
+            value: 192.168.42.3/24
+          - name: '@'
+            value: 192.168.42.100/24
+          - name: www
+            value: 192.168.42.100
+          # Wildcard certificates need to be wrapped in quotes
+          - name: "*.www"
+            value: 192.168.42.11
+          - name: idm
+            value: 10.12.0.10/8
+          - name: priv
+            value: 192.168.0.11/16
+
+
+        AAAA:
+          - name: dns-core-1
+            ttl: 86400
+            value: fdf4:e2e0:df12:a100::2
+          - name: dns-core-2
+            ttl: 86400
+            value: fdf4:e2e0:df12:a100::3
+          - name: "*.www"
+            ttl: 7200
+            value: fdf4:e2e0:df12:a100::11
+
+        CNAME:
+          - name: dns1
+            value: dns-core-1.example.labs.
+          - name: dns2
+            value: dns-core-2.example.labs.
+          - name: ns1
+            value: dns-core-1.example.labs.
+          - name: ns2
+            value: dns-core-2.example.labs.
+
+        MX:
+          - name: '@'
+            priority: 1
+            value: ASPMX.L.GOOGLE.COM.
+          - name: '@'
+            priority: 5
+            value: ALT1.ASPMX.L.GOOGLE.COM.
+          - name: '@'
+            priority: 5
+            value: ALT2.ASPMX.L.GOOGLE.COM.
+          - name: '@'
+            priority: 10
+            value: ALT3.ASPMX.L.GOOGLE.COM.
+          - name: '@'
+            priority: 10
+            value: ALT4.ASPMX.L.GOOGLE.COM.
+
+        TXT:
+          - name: '@'
+            ttl: 6400
+            value: "v=spf1 includespf.dynect.net ~all"
+          - name: 'mail'
+            value: "google-auth"
+
+        SRV:
+          - name: _ntp._udp
+            value: idm.example.labs.
+            port: 123
+            priority: 0
+            weight: 100
+
+    - name: external-example-labs
+      zone: example.labs
+      primary_dns_server: dns-core-1.example.labs
+      default_ttl: 3600
+      records:
+        NS:
+          - name: dns-core-1
+            ttl: 86400
+            domain: example.labs.
+            anchor: '@'
+          - name: dns-core-2
+            ttl: 86400
+            domain: example.labs.
+            anchor: '@'
+        A:
+          - name: dns-core-1
+            ttl: 86400
+            value: 1.2.3.40
+          - name: dns-core-2
+            ttl: 86400
+            value: 1.2.3.50
+          - name: '@'
+            value: 1.2.3.45
+          - name: www
+            value: 1.2.3.45/24
+
+    - name: example.net
+      zone: example.net
+      primary_dns_server: dns-core-1.example.labs
+      default_ttl: 3600
+      records:
+        NS:
+          - name: dns-core-1
+            ttl: 86400
+            domain: example.labs.
+            anchor: '@'
+          - name: dns-core-2
+            ttl: 86400
+            domain: example.labs.
+            anchor: '@'
+        A:
+          - name: '@'
+            value: 192.168.42.100/16
+          - name: www
+            value: 192.168.42.100
+          - name: '*'
+            value: 192.168.42.169
+
+    - name: lab-kemo-network
+      zone: lab.kemo.network
+      primary_dns_server: dns-core-1.kemo.labs
+      default_ttl: 3600
+      records:
+        NS:
+          - name: dns-core-1
+            ttl: 86400
+            domain: kemo.labs.
+            anchor: '@'
+          - name: dns-core-2
+            ttl: 86400
+            domain: kemo.labs.
+            anchor: '@'
+        A:
+          - name: zerotier
+            ttl: 6400
+            value: 192.168.42.23
+          - name: vcenter
+            ttl: 6400
+            value: 192.168.42.30
+          - name: rocinante
+            ttl: 6400
+            value: 192.168.42.50
+          - name: jfrog-artifactory
+            ttl: 6400
+            value: 192.168.77.7
+
+          - name: sno-ocp
+            ttl: 6400
+            value: 192.168.77.71/24
+          - name: api.sno-ocp
+            ttl: 6400
+            value: 192.168.77.71
+          - name: "*.apps.sno-ocp"
+            ttl: 6400
+            value: 192.168.77.71
+
+          - name: core-ocp
+            ttl: 6400
+            value: 192.168.51.72/24
+          - name: api.core-ocp
+            ttl: 6400
+            value: 192.168.51.72
+          - name: "*.apps.core-ocp"
+            ttl: 6400
+            value: 192.168.51.73
+
+          - name: loe-ocp
+            ttl: 6400
+            value: 192.168.42.74/24
+          - name: api.loe-ocp
+            ttl: 6400
+            value: 192.168.42.74
+          - name: "*.apps.loe-ocp"
+            ttl: 6400
+            value: 192.168.42.75
+
+          - name: vsphere-ocp
+            ttl: 6400
+            value: 192.168.42.76
+          - name: api.vsphere-ocp
+            ttl: 6400
+            value: 192.168.42.76
+          - name: "*.apps.vsphere-ocp"
+            ttl: 6400
+            value: 192.168.42.77
+
+
+    - name: d77-kemo-labs
+      zone: d77.kemo.labs
+      primary_dns_server: dns-core-1.kemo.labs
+      default_ttl: 3600
+      records:
+        NS:
+          - name: dns-core-1
+            ttl: 86400
+            domain: kemo.labs.
+            anchor: '@'
+          - name: dns-core-2
+            ttl: 86400
+            domain: kemo.labs.
+            anchor: '@'
+        A:
+
+          - name: pfsense
+            ttl: 6400
+            value: 192.168.77.1/24

@@ -40,3 +40,35 @@ jobs:
     - name: Build
       run: |
         go build -v .
+
+  ftbtest:
+    name: File to BIND Testing
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+
+    - name: Check out code
+      uses: actions/checkout@v3.0.2
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Docker meta
+      id: meta
+      uses: docker/metadata-action@v4
+      with:
+        images: "${{ secrets.REGISTRY_REPO }}"
+        tags: |
+          type=raw,value=latest-test
+
+    - name: Build and push
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        push: false
+        file: Containerfile.test
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
