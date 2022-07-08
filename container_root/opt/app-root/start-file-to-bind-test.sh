@@ -63,7 +63,6 @@ fi
 
 DIG_TEST=$(dig @localhost -x 192.168.0.11 +short)
 echo "DIG TEST - -x 192.168.0.11: ${DIG_TEST}"
-echo "DIG TEST - -x 10.12.0.10: ${DIG_TEST}"
 if [ "$DIG_TEST" != "priv.example.labs." ]; then
   echo "DIG TEST FAILED"
   exit 1
