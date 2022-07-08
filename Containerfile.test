@@ -18,7 +18,8 @@ COPY container_root/ /
 COPY --from=build /opt/app-root/src/go-zones /usr/local/bin/
 
 RUN chmod -R 777 /opt/app-root/generated-conf \
- && chmod +x /opt/app-root/start-file-to-bind.sh
+ && chmod +x /opt/app-root/start-file-to-bind.sh \
+ && chmod +x /opt/app-root/query-tests.sh
 
 EXPOSE 53
 EXPOSE 8053

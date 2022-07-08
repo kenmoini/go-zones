@@ -14,6 +14,7 @@ func GenerateBindZoneFiles(dnsServer *DNS, basePath string) (bool, error) {
 	for _, zone := range dnsServer.Zones {
 
 		var ARecords []ARecord
+		var AAAARecords []AAAARecord
 
 		// Check for defaults/overrides
 		// Set default TTLs
@@ -57,6 +58,36 @@ func GenerateBindZoneFiles(dnsServer *DNS, basePath string) (bool, error) {
 			}
 		}
 
+		// Loop through the AAAA Records - check to see if any are full CIDR addresses, if so we'll generate PTR records
+		for _, record := range zone.Records.AAAA {
+			// Check for a TTL on the record, otherwise set the default
+			var recordTTL int = zoneTTL
+			if record.TTL != 0 {
+				recordTTL = record.TTL
+			}
+
+			if strings.Contains(record.Value, "/") {
+				address, _, _, _ := splitV6AddressIntoParts(record.Value)
+
+				// Create a new AAAARecord variable with just the address
+				AAAARecord := AAAARecord{
+					Name:  record.Name,
+					Value: address,
+					TTL:   recordTTL,
+				}
+				AAAARecords = append(AAAARecords, AAAARecord)
+
+			} else {
+				// This is just a plain old AAAA record
+				AAAARecord := AAAARecord{
+					Name:  record.Name,
+					Value: record.Value,
+					TTL:   recordTTL,
+				}
+				AAAARecords = append(AAAARecords, AAAARecord)
+			}
+		}
+
 		//=================================================
 		// Build the Forward Zone variable back up with our processed A Records
 		newForwardZone := Zone{
@@ -66,7 +97,7 @@ func GenerateBindZoneFiles(dnsServer *DNS, basePath string) (bool, error) {
 			DefaultTTL:       zoneTTL,
 			Records: Records{
 				A:     ARecords,
-				AAAA:  zone.Records.AAAA,
+				AAAA:  AAAARecords,
 				CNAME: zone.Records.CNAME,
 				MX:    zone.Records.MX,
 				NS:    zone.Records.NS,
