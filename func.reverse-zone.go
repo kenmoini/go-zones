@@ -7,6 +7,8 @@ import (
 	"strings"
 	"text/template"
 	"time"
+
+	"github.com/kenmoini/go-zones/ipv6calc"
 )
 
 type ZoneTTLs struct {
@@ -52,6 +54,10 @@ func GenerateBindReverseZoneFiles(dnsServer *DNS, basePath string) (map[string][
 			zoneTTL = zone.DefaultTTL
 		}
 		// TODO: Come back and add additional Zone TTL overrides
+
+		//=================================================================================================================================
+		// IPV4, A RECORD LOOP
+		//=================================================================================================================================
 
 		// Loop through the A Records - check to see if any are full CIDR addresses, if so we'll generate PTR records
 		for _, record := range zone.Records.A {
@@ -109,6 +115,69 @@ func GenerateBindReverseZoneFiles(dnsServer *DNS, basePath string) (map[string][
 				}
 			}
 
+		}
+
+		//=================================================================================================================================
+		// IPV6, AAAA RECORD LOOP
+		//=================================================================================================================================
+
+		// Loop through the AAAA Records - check to see if any are full CIDR addresses, if so we'll generate PTR records
+		for _, record := range zone.Records.AAAA {
+
+			// Check for a TTL on the record, otherwise set the Zone default
+			var recordTTL int = zoneTTL
+			if record.TTL != 0 {
+				recordTTL = record.TTL
+			}
+
+			// If the AAAA record value has a / in it, it's a CIDR address, so we'll generate a PTR record from it
+			if strings.Contains(record.Value, "/") {
+				computedAddress := ipv6calc.NewIPv6Address(record.Value)
+				//log.Printf("Parsed NewIPv6Address: %v", ipv6calc.NewIPv6Address(record.Value))
+				//_, _, r_networkPortion, r_hostPortion := ipv6calc.SplitV6AddressIntoParts(record.Value)
+				//address, cidr, r_networkPortion, r_hostPortion := splitV6AddressIntoParts(record.Value)
+				//log.Printf("address: %v", address)
+				//log.Printf("cidr: %v", cidr)
+				//log.Printf("r_hostPortion: %v", r_hostPortion)
+				//log.Printf("r_networkPortion: %v", r_networkPortion)
+
+				// Unless the record has NoPTR set then create a PTR record
+				if !record.NoPTR {
+					// Check to make sure this is not a wildcard record
+					if !strings.Contains(record.Name, "*") {
+
+						// Make sure to leave out the record if it is an (at) symbol
+						recordValuePrefix := ""
+						if record.Name != "@" {
+							recordValuePrefix = record.Name + "."
+						}
+
+						// Create a new PTRRecord variable with the reverse address
+						PTRRecord := PTRRecord{
+							Name:              computedAddress.ReverseRecord,
+							Value:             recordValuePrefix + zone.Zone + ".",
+							TTL:               recordTTL,
+							TargetReverseZone: computedAddress.ReverseZone,
+						}
+						//log.Printf("PTRRecord: %v", PTRRecord)
+						PTRRecords = append(PTRRecords, PTRRecord)
+
+						// Loop through this Zone's associated views and add the
+						for _, view := range views {
+							//revZoneName := r_networkPortion + ".ip6.arpa"
+							if !stringInSlice(computedAddress.ReverseZone, reverseViewPair[view]) {
+								reverseViewPair[view] = append(reverseViewPair[view], computedAddress.ReverseZone)
+								reverseZoneTTLs[computedAddress.ReverseZone] = ZoneTTLs{
+									DefaultTTL: recordTTL,
+								}
+								reverseZonePrimaryDNSServer[computedAddress.ReverseZone] = zone.PrimaryDNSServer
+								reverseZoneNSRecords[computedAddress.ReverseZone] = zone.Records.NS
+							}
+						}
+
+					}
+				}
+			}
 		}
 
 		// If we created PTR records in this Zone from A or AAAA Records, then we'll need to create a reverse zone

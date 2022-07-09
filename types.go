@@ -151,6 +151,7 @@ type AAAARecord struct {
 	Name  string `yaml:"name"`
 	Value string `yaml:"value"`
 	TTL   int    `yaml:"ttl,omitempty"`
+	NoPTR bool   `yaml:"no_ptr,omitempty"`
 }
 
 // CNAMERecord is a CNAME Record definition

@@ -7,6 +7,8 @@ import (
 	"strings"
 	"text/template"
 	"time"
+
+	"github.com/kenmoini/go-zones/ipv6calc"
 )
 
 func GenerateBindZoneFiles(dnsServer *DNS, basePath string) (bool, error) {
@@ -67,7 +69,7 @@ func GenerateBindZoneFiles(dnsServer *DNS, basePath string) (bool, error) {
 			}
 
 			if strings.Contains(record.Value, "/") {
-				address, _, _, _ := splitV6AddressIntoParts(record.Value)
+				address, _, _, _ := ipv6calc.SplitV6AddressIntoParts(record.Value)
 
 				// Create a new AAAARecord variable with just the address
 				AAAARecord := AAAARecord{

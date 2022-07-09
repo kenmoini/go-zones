@@ -204,5 +204,8 @@ Since this is just a Golang application, as long as you have Golang v1.15+ then 
 ```bash
 go build
 
+# or mega test
+rm -rf generated/ && go build && ./go-zones -source=./example.server.yml -dir=./generated
+
 ./go-zones
 ```

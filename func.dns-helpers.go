@@ -15,24 +15,6 @@ func reverseIntSlice(s []int) []int {
 	return s
 }
 
-// splitV6AddressIntoParts splits an address into its parts:
-//  IP, CIDR, reversedNetworkPortion, reversedHostPortion
-func splitV6AddressIntoParts(address string) (string, string, string, string) {
-
-	addressArray := strings.Split(address, "/")
-	addressPart := addressArray[0]
-
-	// If the address is a full CIDR address, calculate the netmask
-	if len(addressArray) > 1 {
-		cidrPartStr := addressArray[1]
-		//cidrPart, _ := strconv.Atoi(addressArray[1])
-
-		return addressPart, cidrPartStr, "", ""
-	}
-
-	return addressPart, "", "", ""
-}
-
 // splitV4AddressIntoParts splits an address into its parts:
 //  IP, CIDR, reversedNetworkPortion, reversedHostPortion
 func splitV4AddressIntoParts(address string) (string, string, string, string) {
