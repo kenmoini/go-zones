@@ -61,6 +61,9 @@ func NewIPv6Address(address string) *IPv6Address {
 		for i, part := range addressSplit {
 			addressParts[i] = PadIPv6Octet(part)
 		}
+
+		// TODO: Calculate the networkParts, networkPrefix, hostParts, hostAddress, paddedHostAddress from the binary translation of the CIDR slash
+
 	} else if len(addressPartsArr) == 2 {
 		// If there are two parts, then the first part is the network portion and the second part is the host portion
 
