@@ -5,7 +5,7 @@ set -e
 export NAMEDCONF=/opt/app-root/vendor/bind/named.conf
 export KRB5_KTNAME=/etc/named.keytab
 export DISABLE_ZONE_CHECKING=no
-export OPTIONS=""
+export OPTIONS="-4"
 export SERVER_CONFIG_YAML="/etc/go-zones/server.yml"
 export GENERATED_DIR="/opt/app-root/generated-conf"
 export HALT_STARTUP="false"
