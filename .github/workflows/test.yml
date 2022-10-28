@@ -60,7 +60,8 @@ jobs:
       id: meta
       uses: docker/metadata-action@v4
       with:
-        images: "${{ secrets.REGISTRY_REPO }}"
+        images: |
+          "${{ secrets.REGISTRY_REPO }}"
         tags: |
           type=raw,value=latest-test
 
