@@ -3,6 +3,9 @@ on:
   push:
     paths-ignore:
       - 'README.md'
+      - '.github/workflows/build-and-push.yml'
+      - '.github/workflows/release.yml'
+      - '.github/workflows/test.yml'
     branches:
       - main
   # Schedule workflow run at 00:00 on Sunday
