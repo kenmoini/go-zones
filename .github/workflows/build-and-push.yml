@@ -8,6 +8,14 @@ on:
       - '.github/workflows/test.yml'
     branches:
       - main
+
+  # Schedule workflow run at 00:00 on Sunday
+  schedule:
+    - cron: '0 0 * * 0'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
 jobs:
   # Build the Container
   build-container:
@@ -17,13 +25,15 @@ jobs:
     steps:
 
     - name: Check out code
-      uses: actions/checkout@v3.0.2
+      uses: actions/checkout@v3.3.0
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
+      with:
+        platforms: arm64,amd64
 
     - name: Docker meta
       id: meta
@@ -49,10 +59,11 @@ jobs:
         password: "${{ secrets.REGISTRY_TOKEN }}"
 
     - name: Build and push
-      uses: docker/build-push-action@v3
+      uses: docker/build-push-action@v4
       with:
         context: .
         push: true
         file: Containerfile
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+        platforms: linux/amd64, linux/arm64

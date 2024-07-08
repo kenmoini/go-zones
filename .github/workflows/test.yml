@@ -12,6 +12,9 @@ on:
       - '.github/workflows/build-and-push-ftb.yml'
       - '.github/workflows/build-and-push.yml'
       - '.github/workflows/release.yml'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
   # For systems with an upstream API that could drift unexpectedly (like most SaaS systems, etc.),
   # we recommend testing at a regular interval not necessarily tied to code changes. This will 
   # ensure you are alerted to something breaking due to an API change, even if the code did not
@@ -33,7 +36,7 @@ jobs:
       id: go
 
     - name: Check out code into the Go module directory
-      uses: actions/checkout@v3.0.2
+      uses: actions/checkout@v3.3.0
 
     - name: Get dependencies
       run: |
@@ -51,7 +54,7 @@ jobs:
     steps:
 
     - name: Check out code
-      uses: actions/checkout@v3.0.2
+      uses: actions/checkout@v3.3.0
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
@@ -69,7 +72,7 @@ jobs:
           type=raw,value=latest-test
 
     - name: Build and test
-      uses: docker/build-push-action@v3
+      uses: docker/build-push-action@v4
       with:
         context: .
         push: false
