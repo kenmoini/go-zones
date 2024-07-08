@@ -28,7 +28,7 @@ jobs:
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
       with:
-        platforms: arm64,amd64
+        platforms: arm64,amd64,arm/v7
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
@@ -64,4 +64,4 @@ jobs:
         file: Containerfile.file-to-BIND
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
-        platforms: linux/amd64, linux/arm64
+        platforms: linux/amd64, linux/arm64, linux/arm/v7
