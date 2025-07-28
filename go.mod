@@ -1,11 +1,11 @@
 module github.com/kenmoini/go-zones
 
-go 1.18
+go 1.23.0
 
 require (
 	github.com/brotherpowers/ipsubnet v0.0.0-20170914094241-30bc98f0a5b1
 	github.com/miekg/dns v1.1.43
-	golang.org/x/sys v0.0.0-20210303074136-134d130e1a04
+	golang.org/x/sys v0.34.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
