@@ -23,10 +23,10 @@ jobs:
     steps:
 
     - name: Check out code
-      uses: actions/checkout@v3.3.0
+      uses: actions/checkout@v4.2.2
 
     - name: Set up QEMU
-      uses: docker/setup-qemu-action@v2
+      uses: docker/setup-qemu-action@v3
       with:
         platforms: arm64,amd64
 
